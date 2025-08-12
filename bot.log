@@ -35,3 +35,11 @@
 [2025-08-12T19:14:32.559Z] ERROR in loading nextMeeting: Unexpected end of JSON input
 [2025-08-12T19:15:39.376Z] ERROR in loading nextMeeting: Unexpected end of JSON input
 [2025-08-12T19:15:59.644Z] ✅ История успешно загружена в Google Sheets!
+[2025-08-12T19:53:09.359Z] ERROR in uploadHistoryToGoogleSheets: invalid_grant: Invalid JWT Signature.
+[2025-08-12T19:53:09.359Z] ERROR in saving to Google Sheets: invalid_grant: Invalid JWT Signature.
+[2025-08-12T19:55:02.420Z] Бот успешно запущен!
+[2025-08-12T19:56:28.068Z] Бот успешно запущен!
+[2025-08-12T19:59:31.858Z] Бот успешно запущен!
+[2025-08-12T20:18:57.781Z] Бот успешно запущен!
+[2025-08-12T20:19:11.335Z] ✅ История успешно загружена в Google Sheets!
+[2025-08-12T20:21:36.231Z] ✅ История успешно загружена в Google Sheets!

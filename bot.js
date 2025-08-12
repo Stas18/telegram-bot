@@ -42,14 +42,11 @@ const DEFAULT_MEETING = {
   requirements: 'Рекомендуем посмотреть фильм заранее'
 };
 
-<<<<<<< HEAD
 // Google Sheets configuration
 const SPREADSHEET_ID = '1a6EWO5ECaI1OveO4Gy7y9zH5LjFtlm8Alg9iSRP2heE';
 const SHEET_NAME = 'Films';
 const CREDENTIALS_PATH = path.join(__dirname, 'credentials.json');
 
-=======
->>>>>>> 64486be525fca8e65ec86ff806e6c9a0bc6126d2
 // Validate environment variables
 const validateEnvironment = () => {
   const missingVars = Object.values(ENV_CHECK).filter(key => !process.env[key]);
@@ -68,11 +65,7 @@ const bot = new TelegramBot(process.env.BOT_TOKEN, {
   baseApiUrl: 'https://api.telegram.org'
 });
 
-<<<<<<< HEAD
 let ADMIN_IDS = process.env.ADMIN_IDS.split(',');
-=======
-const ADMIN_IDS = process.env.ADMIN_IDS.split(',');
->>>>>>> 64486be525fca8e65ec86ff806e6c9a0bc6126d2
 
 // File paths
 const filePaths = {
@@ -131,20 +124,12 @@ const votingManager = {
     film: null,
     director: null,
     genre: null,
-<<<<<<< HEAD
     country: null,
-=======
->>>>>>> 64486be525fca8e65ec86ff806e6c9a0bc6126d2
     year: null,
     poster: null,
     discussionNumber: null,
     date: null,
-<<<<<<< HEAD
     description: null
-=======
-    description: null,
-    country: null
->>>>>>> 64486be525fca8e65ec86ff806e6c9a0bc6126d2
   }),
   save: (data) => fileManager.save(FILE_KEYS.VOTING, data),
   calculateAverage: (ratings) => {
@@ -180,11 +165,7 @@ const formatter = {
     const ratingBlock = voting.average
       ? `│ ⭐ <b>Рейтинг:</b> ${voting.average.toFixed(1)}/10\n` +
         `│ 👥 <b>Оценок:</b> ${Object.keys(voting.ratings).length}\n` +
-<<<<<<< HEAD
         `├───────────────\n`
-=======
-        `├───────────────────────\n`
->>>>>>> 64486be525fca8e65ec86ff806e6c9a0bc6126d2
       : '';
 
     return `
@@ -266,7 +247,6 @@ const menuCreator = {
 
 // Core functions
 const coreFunctions = {
-<<<<<<< HEAD
   uploadHistoryToGoogleSheets: async () => {
     try {
       const auth = new google.auth.GoogleAuth({
@@ -345,13 +325,6 @@ const coreFunctions = {
     const voting = votingManager.load();
     const isAdmin = ADMIN_IDS.includes(chatId.toString());
 
-=======
-  sendMeetingInfo: async (chatId) => {
-    const meeting = meetingManager.getCurrent();
-    const voting = votingManager.load();
-    const isAdmin = ADMIN_IDS.includes(chatId.toString());
-
->>>>>>> 64486be525fca8e65ec86ff806e6c9a0bc6126d2
     try {
       const message = formatter.formatMovieInfo(meeting, voting);
       await bot.sendPhoto(chatId, voting.poster || meeting.poster, {
@@ -366,10 +339,7 @@ const coreFunctions = {
       });
     }
   },
-<<<<<<< HEAD
 
-=======
->>>>>>> 64486be525fca8e65ec86ff806e6c9a0bc6126d2
   showSubscriptionMenu: async (chatId) => {
     const subscriptions = subscriptionsManager.load();
     const isSubscribed = subscriptions.has(chatId.toString());
@@ -382,20 +352,12 @@ const coreFunctions = {
       menuCreator.createSubscriptionMenu(isSubscribed)
     );
   },
-<<<<<<< HEAD
 
   showHistory: async (chatId) => {
     try {
       const history = historyManager.load();
       const isAdmin = ADMIN_IDS.includes(chatId.toString());
 
-=======
-  showHistory: async (chatId) => {
-    try {
-      const history = historyManager.load();
-      const isAdmin = ADMIN_IDS.includes(chatId.toString());
-
->>>>>>> 64486be525fca8e65ec86ff806e6c9a0bc6126d2
       if (!history || history.length === 0) {
         return await bot.sendMessage(
           chatId,
@@ -409,7 +371,6 @@ const coreFunctions = {
       for (const item of recentHistory) {
         const message = `📜 <b>История оценок:</b>\n\n` +
           `🎥 <b>${formatter.escapeHtml(item.film)}</b>\n` +
-<<<<<<< HEAD
           `📝 <b>Описание:</b> ${item.description || 'Описание отсутствует'}\n` +
           `🎭 <b>Жанр:</b> ${item.genre || 'не указан'}\n` +
           `🌎 <b>Страна:</b> ${item.country || 'не указана'}\n` +
@@ -419,15 +380,6 @@ const coreFunctions = {
           `🗓 <b>Дата:</b> ${item.date}\n` +
           `⭐ <b>Средняя оценка:</b> ${item.average?.toFixed(1) || 'N/A'}/10\n` +
           `👥 <b>Участников:</b> ${item.participants || 0}`;
-=======
-          `📝 <b>О фильме:</b> ${item.description || 'Описание отсутствует'}\n` +
-          `👥 Участников: ${item.participants}\n` +
-          `⭐ Оценка: ${item.average?.toFixed(1) || 'N/A'}/10\n` +
-          `🎭 Жанр: ${item.genre || 'не указан'}\n` +
-          `🌎 Страна: ${item.country || 'не указана'}\n` +
-          `📅 Год: ${item.year || 'не указан'}\n` +
-          `🎬 Режиссер: ${item.director || 'не указан'}`;
->>>>>>> 64486be525fca8e65ec86ff806e6c9a0bc6126d2
 
         try {
           if (item.poster) {
@@ -500,10 +452,7 @@ const commandHandlers = {
       logger.error(error, `sending start message to ${chatId}`);
     }
   },
-<<<<<<< HEAD
 
-=======
->>>>>>> 64486be525fca8e65ec86ff806e6c9a0bc6126d2
   notify: async (msg, match) => {
     if (!ADMIN_IDS.includes(msg.from.id.toString())) {
       return bot.sendMessage(msg.chat.id, '🚫 Эта команда только для администраторов');
@@ -530,10 +479,7 @@ const commandHandlers = {
       caption: `✅ Сообщение отправлено ${sentCount} подписчикам`
     });
   },
-<<<<<<< HEAD
 
-=======
->>>>>>> 64486be525fca8e65ec86ff806e6c9a0bc6126d2
   subscribers: (msg) => {
     if (!ADMIN_IDS.includes(msg.from.id.toString())) {
       return bot.sendMessage(msg.chat.id, '🚫 Только для администратора');
@@ -546,10 +492,7 @@ const commandHandlers = {
       { parse_mode: 'HTML' }
     );
   },
-<<<<<<< HEAD
 
-=======
->>>>>>> 64486be525fca8e65ec86ff806e6c9a0bc6126d2
   restart: async (msg) => {
     const chatId = msg.chat.id;
     
@@ -566,10 +509,7 @@ const commandHandlers = {
       await bot.sendMessage(chatId, '❌ Ошибка при перезапуске бота');
     }
   },
-<<<<<<< HEAD
 
-=======
->>>>>>> 64486be525fca8e65ec86ff806e6c9a0bc6126d2
   checkadmin: (msg) => {
     const chatId = msg.chat.id.toString();
     const isAdmin = ADMIN_IDS.includes(chatId);
@@ -592,23 +532,16 @@ const commandHandlers = {
         ]
       }
     });
-<<<<<<< HEAD
   },
 
   test_sheets: async (msg) => {
     if (!ADMIN_IDS.includes(msg.from.id.toString())) return;
     await coreFunctions.uploadHistoryToGoogleSheets();
     bot.sendMessage(msg.chat.id, 'Попытка синхронизации с Google Sheets завершена');
-=======
->>>>>>> 64486be525fca8e65ec86ff806e6c9a0bc6126d2
   }
 };
 
 // Message handler
-<<<<<<< HEAD
-// Message handler
-=======
->>>>>>> 64486be525fca8e65ec86ff806e6c9a0bc6126d2
 bot.on('message', async (msg) => {
   if (msg.text && !msg.text.startsWith('/')) {
     const chatId = msg.chat.id;
@@ -775,26 +708,16 @@ const callbackHandlers = {
           return await bot.answerCallbackQuery(query.id, { text: 'Нет данных для сохранения' });
         }
 
-<<<<<<< HEAD
         // Подготовка данных для истории
         const historyEntry = {
           film: voting.film,
           director: voting.director,
           genre: voting.genre,
           country: voting.country,
-=======
-        const history = historyManager.load();
-        history.unshift({
-          film: voting.film,
-          director: voting.director,
-          genre: voting.genre,
-          country: voting.country || 'не указана',
->>>>>>> 64486be525fca8e65ec86ff806e6c9a0bc6126d2
           year: voting.year,
           description: voting.description || 'Описание отсутствует',
           average: voting.average,
           participants: Object.keys(voting.ratings).length,
-<<<<<<< HEAD
           date: voting.date || new Date().toLocaleDateString('ru-RU'),
           poster: voting.poster,
           discussionNumber: voting.discussionNumber
@@ -833,29 +756,11 @@ const callbackHandlers = {
           logger.error(error, 'saving to Google Sheets');
           await bot.answerCallbackQuery(query.id, { text: 'Ошибка при сохранении в Google Sheets' });
         }
-=======
-          date: new Date().toISOString(),
-          poster: voting.poster,
-          discussionNumber: voting.discussionNumber
-        });
-
-        historyManager.save(history.slice(0, 5));
-        await bot.answerCallbackQuery(query.id, { text: 'Результаты сохранены в историю!' });
-        await bot.editMessageText('✅ Результаты голосования сохранены в историю.', {
-          chat_id: chatId,
-          message_id: query.message.message_id,
-          reply_markup: menuCreator.createAdminPanel().reply_markup
-        });
->>>>>>> 64486be525fca8e65ec86ff806e6c9a0bc6126d2
       },
       admin_add_next_movie: async () => {
         await bot.answerCallbackQuery(query.id);
         await bot.editMessageText('Введите информацию о следующем фильме в формате:\n\n' +
-<<<<<<< HEAD
           '<b>Дата|Время|Место|Название|Режиссер|Жанр|Страна|Год|Постер URL|Номер обсуждения|Описание</b>\n\n' +
-=======
-          '<b>Дата|Время|Место|Название|Режиссер|Жанр|Страна|Год|Постер|Номер обсуждения|Описание</b>\n\n' +
->>>>>>> 64486be525fca8e65ec86ff806e6c9a0bc6126d2
           'Пример:\n' +
           '20.07.2025|15:00|Кофейня "Том Сойер"|Интерстеллар|Кристофер Нолан|фантастика|США|2014|https://example.com/poster.jpg|16|Фантастический фильм о космических путешествиях', {
           chat_id: chatId,
@@ -887,12 +792,8 @@ const callbackHandlers = {
                 year: parts[7],
                 poster: parts[8],
                 discussionNumber: parts[9],
-<<<<<<< HEAD
                 description: parts[10],
                 requirements: meetingManager.getCurrent().requirements // Сохраняем предыдущие требования
-=======
-                description: parts[10]
->>>>>>> 64486be525fca8e65ec86ff806e6c9a0bc6126d2
               };
               meetingManager.save(nextMeeting);
 
@@ -902,20 +803,12 @@ const callbackHandlers = {
                 film: parts[3],
                 director: parts[4],
                 genre: parts[5],
-<<<<<<< HEAD
                 country: parts[6],
-=======
->>>>>>> 64486be525fca8e65ec86ff806e6c9a0bc6126d2
                 year: parts[7],
                 poster: parts[8],
                 discussionNumber: parts[9],
                 date: parts[0],
-<<<<<<< HEAD
                 description: parts[10]
-=======
-                description: parts[10],
-                country: parts[6]
->>>>>>> 64486be525fca8e65ec86ff806e6c9a0bc6126d2
               });
 
               await bot.sendMessage(chatId, '✅ Информация о следующем фильме сохранена!', menuCreator.createMainMenu(true));

@@ -172,7 +172,7 @@ const formatter = {
 🎬 <b>${filmInfo.film.toUpperCase()}</b>
 
 📝 <b>О фильме:</b>
-├───────────────────────
+├────────────────
 │ 🎥 <b>Режиссер:</b> ${filmInfo.director}
 │ 🎭 <b>Жанр:</b> ${filmInfo.genre}
 │ 🌎 <b>Страна:</b> ${filmInfo.country}

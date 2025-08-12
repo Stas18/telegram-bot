@@ -1,13 +1,14 @@
 {
-  "date": "10.08.2025",
-  "time": "15:00",
-  "place": "Кофейня \"Том Сойер\", ул. Шмидта, 12",
-  "film": "Жмурки",
-  "director": "Алексей Балабанов",
-  "genre": "Комедия, Криминал",
-  "country": "Россия",
-  "year": "2005",
-  "poster": "https://sun9-85.userapi.com/s/v1/ig2/NUz8XoRwE4NrqjAH2NkthL69ZGUwFJNz8HjlcddFl1QMa7vPbjUY3URk7rBmqeaUVNiN5P0rWozJtObMIx6Knb2w.jpg?quality=95&as=32x45,48x68,72x102,108x153,160x226,240x339,360x509,394x557&from=bu&cs=394x0",
-  "discussionNumber": "252",
-  "description": "Описание"
+  "date": "Дата встречи не указана",
+  "time": "Время не указано",
+  "place": "Онлайн (https://telemost.yandex.ru/) / Кофейня \"КиноМан\" (ул. Пушкинская, 42)",
+  "film": "Фильм ещё не выбран",
+  "director": "Режиссёр не указан",
+  "genre": "Жанр уточняется",
+  "country": "Страна производства не указана",
+  "year": "Год выхода неизвестен",
+  "poster": "https://media.giphy.com/media/3o6Zt6ML6BklcajjsA/giphy.gif",
+  "discussionNumber": "Следующий номер после последнего в истории",
+  "description": "После просмотра будет обсуждение с чаем/кофе и печеньками!",
+  "requirements": "Рекомендуем посмотреть фильм заранее"
 }

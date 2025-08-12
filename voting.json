@@ -1,13 +1,13 @@
 {
   "ratings": {},
   "average": null,
-  "film": "Жмурки",
-  "director": "Алексей Балабанов",
-  "genre": "Комедия, Криминал",
-  "year": "2005",
-  "poster": "https://sun9-85.userapi.com/s/v1/ig2/NUz8XoRwE4NrqjAH2NkthL69ZGUwFJNz8HjlcddFl1QMa7vPbjUY3URk7rBmqeaUVNiN5P0rWozJtObMIx6Knb2w.jpg?quality=95&as=32x45,48x68,72x102,108x153,160x226,240x339,360x509,394x557&from=bu&cs=394x0",
-  "discussionNumber": "252",
-  "date": "10.08.2025",
-  "description": "Описание",
-  "country": "Россия"
+  "film": null,
+  "director": null,
+  "genre": null,
+  "country": null,
+  "year": null,
+  "poster": null,
+  "discussionNumber": null,
+  "date": null,
+  "description": null
 }

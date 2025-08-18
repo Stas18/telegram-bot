@@ -1,0 +1,37 @@
+[2025-08-18T21:21:58.219Z] Бот успешно запущен!
+[2025-08-18T21:38:07.021Z] Бот успешно запущен!
+[2025-08-18T21:42:01.622Z] Бот успешно запущен!
+[2025-08-18T21:45:09.976Z] Бот успешно запущен!
+[2025-08-18T21:45:10.387Z] ERROR in handling callback for 1147849296: ETELEGRAM: 400 Bad Request: query is too old and response timeout expired or query ID is invalid
+[2025-08-18T21:45:10.552Z] ERROR in handling callback for 1147849296: ETELEGRAM: 400 Bad Request: query is too old and response timeout expired or query ID is invalid
+[2025-08-18T21:45:10.556Z] ERROR in handling callback for 1147849296: ETELEGRAM: 400 Bad Request: query is too old and response timeout expired or query ID is invalid
+[2025-08-18T21:49:31.316Z] Бот успешно запущен!
+[2025-08-18T21:49:46.605Z] ERROR in handling callback for 1147849296: Cannot read properties of undefined (reading 'error')
+[2025-08-18T21:49:51.772Z] ERROR in handling callback for 1147849296: Cannot read properties of undefined (reading 'error')
+[2025-08-18T21:53:23.900Z] Бот успешно запущен!
+[2025-08-18T21:58:31.777Z] Бот успешно запущен!
+[2025-08-18T22:03:18.799Z] Бот успешно запущен!
+[2025-08-18T22:04:36.531Z] ✅ История успешно загружена в Google Sheets!
+[2025-08-18T22:04:36.642Z] ERROR in saving to Google Sheets: ETELEGRAM: 400 Bad Request: query is too old and response timeout expired or query ID is invalid
+[2025-08-18T22:04:36.726Z] ERROR in admin callback admin_save_to_history from 1147849296: ETELEGRAM: 400 Bad Request: query is too old and response timeout expired or query ID is invalid
+[2025-08-18T22:04:36.809Z] ERROR: Error handling callback: ETELEGRAM: 400 Bad Request: query is too old and response timeout expired or query ID is invalid
+[2025-08-18T22:04:36.902Z] ERROR: Failed to answer callback: ETELEGRAM: 400 Bad Request: query is too old and response timeout expired or query ID is invalid
+[2025-08-18T22:09:31.203Z] Бот успешно запущен!
+[2025-08-18T22:11:58.807Z] ERROR in sending results to 387650770: ETELEGRAM: 400 Bad Request: chat not found
+[2025-08-18T22:11:58.912Z] ERROR in sending results to 7644957461: ETELEGRAM: 400 Bad Request: chat not found
+[2025-08-18T22:11:59.013Z] ERROR in sending results to 863909091: ETELEGRAM: 400 Bad Request: chat not found
+[2025-08-18T22:11:59.144Z] ERROR in sending results to 447164142: ETELEGRAM: 400 Bad Request: chat not found
+[2025-08-18T22:11:59.239Z] ERROR in sending results to 442064953: ETELEGRAM: 400 Bad Request: chat not found
+[2025-08-18T22:12:20.428Z] ✅ История успешно загружена в Google Sheets!
+[2025-08-18T22:24:40.104Z] Бот успешно запущен!
+[2025-08-18T22:25:55.233Z] ✅ История успешно загружена в Google Sheets!
+[2025-08-18T22:30:20.840Z] Бот успешно запущен!
+[2025-08-18T22:32:36.708Z] ✅ История успешно загружена в Google Sheets!
+[2025-08-18T22:39:37.881Z] Бот успешно запущен!
+[2025-08-18T22:40:37.115Z] Бот успешно запущен!
+[2025-08-18T22:41:25.900Z] Бот успешно запущен!
+[2025-08-18T22:50:35.558Z] Бот успешно запущен!
+[2025-08-18T22:55:48.698Z] Бот успешно запущен!
+[2025-08-18T23:01:21.291Z] Бот успешно запущен!
+[2025-08-18T23:03:10.071Z] Бот успешно запущен!
+[2025-08-18T23:04:26.503Z] Бот успешно запущен!

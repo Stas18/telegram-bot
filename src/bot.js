@@ -23,6 +23,10 @@ const subscriptionsManager = require('../managers/subscriptionsManager');
 const votingManager = require('../managers/votingManager');
 const historyManager = require('../managers/historyManager');
 const meetingManager = require('../managers/meetingManager');
+const filmsManager = require('../managers/filmsManager');
+
+// Service imports
+const githubService = require('../services/githubService');
 
 // Component imports
 const formatter = require('../components/formatter');
@@ -60,6 +64,8 @@ const dependencies = {
   votingManager,
   historyManager,
   meetingManager,
+  filmsManager,
+  githubService,
   formatter,
   menuCreator,
   coreFunctions,
@@ -68,8 +74,15 @@ const dependencies = {
   ANIMATION_URLS,
   SPREADSHEET_ID,
   SHEET_NAME,
-  CREDENTIALS_PATH: path.join(__dirname, '../config/credentials.json')
+  CREDENTIALS_PATH: path.join(__dirname, '../config/credentials.json'),
+  GITHUB_TOKEN: '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'
 };
+
+// Initialize githubService
+githubService.init({
+  logger: logger,
+  GITHUB_TOKEN: dependencies.GITHUB_TOKEN
+});
 
 // Initialize handlers with dependencies
 coreFunctions.init(dependencies);
@@ -152,43 +165,20 @@ bot.on('message', async (msg) => {
 
 bot.on('callback_query', async (query) => {
   try {
-    const chatId = query.message.chat.id;
-    const isAdmin = ADMIN_IDS.includes(chatId.toString());
-
-    // Немедленный ответ, что запрос принят
-    await bot.answerCallbackQuery(query.id, { text: '...', show_alert: false });
-
-    if (query.data.startsWith('admin_')) {
-      if (!isAdmin) {
-        await bot.answerCallbackQuery(query.id, { 
-          text: 'Эта функция только для администратора',
-          show_alert: false 
-        });
-        return;
-      }
-      await callbackHandlers.handleAdminCallbacks(query);
-    } else {
-      await callbackHandlers.handleUserCallbacks(query);
-    }
+    // Используем единый обработчик
+    await callbackHandlers.handleCallback(query);
   } catch (error) {
-    // Улучшенная обработка ошибок
-    if (error.response && error.response.error_code === 400 && 
-        error.response.description.includes('query is too old')) {
-      logger.log(`Callback query expired for ${query.from?.id || 'unknown'}`);
-    } else {
-      logger.error(`Error handling callback: ${error.message}`);
-      try {
-        await bot.answerCallbackQuery(query.id, {
-          text: 'Произошла ошибка',
-          show_alert: false
-        });
-      } catch (e) {
-        logger.error(`Failed to answer callback: ${e.message}`);
-      }
+    logger.error(`Error handling callback: ${error.message}`);
+    try {
+      await bot.answerCallbackQuery(query.id, {
+        text: 'Произошла ошибка',
+        show_alert: false
+      });
+    } catch (e) {
+      logger.error(`Failed to answer callback: ${e.message}`);
     }
   }
 });
-
 // Set up weekly schedule
 const weeklySchedule = nodeSchedule.scheduleJob('0 14 * * 5', async () => {
   logger.log('Запуск еженедельной рассылки');

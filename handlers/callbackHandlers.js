@@ -1,21 +1,14 @@
 module.exports = {
   init: function(deps) {
-    // Инициализация подмодулей
-    this.adminCallbacks = require('./adminCallbacks');
-    this.userCallbacks = require('./userCallbacks');
-    this.callbackDispatcher = require('./callbackDispatcher');
-    
-    // Передача зависимостей
-    this.adminCallbacks.init(deps);
-    this.userCallbacks.init(deps);
-    this.callbackDispatcher.init({
-      adminCallbacks: this.adminCallbacks,
-      userCallbacks: this.userCallbacks,
-      logger: deps.logger
-    });
-
-    // Сохранение зависимостей для других методов
+    // Сохраняем зависимости
     Object.assign(this, deps);
+    
+    // Инициализируем подмодули с зависимостями
+    this.adminCallbacks = require('./adminCallbacks');
+    this.adminCallbacks.init(deps);
+    
+    this.userCallbacks = require('./userCallbacks');
+    this.userCallbacks.init(deps);
   },
 
   handleAdminCallbacks: async function(query) {
@@ -24,5 +17,25 @@ module.exports = {
 
   handleUserCallbacks: async function(query) {
     await this.userCallbacks.handle(query);
+  },
+
+  // Новая функция для обработки всех callback
+  handleCallback: async function(query) {
+    const chatId = query.message.chat.id;
+    const isAdmin = this.ADMIN_IDS.includes(chatId.toString());
+
+    if (query.data.startsWith('admin_') && !isAdmin) {
+      await this.bot.answerCallbackQuery(query.id, {
+        text: 'Эта функция только для администратора',
+        show_alert: false
+      });
+      return;
+    }
+
+    if (query.data.startsWith('admin_')) {
+      await this.handleAdminCallbacks(query);
+    } else {
+      await this.handleUserCallbacks(query);
+    }
   }
 };

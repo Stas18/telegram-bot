@@ -9,7 +9,8 @@ module.exports = {
     SUBSCRIPTIONS: 'subscriptions',
     VOTING: 'voting',
     HISTORY: 'history',
-    NEXT_MEETING: 'nextMeeting'
+    NEXT_MEETING: 'nextMeeting',
+    FILMS: 'films'
   },
   
   ANIMATION_URLS: {

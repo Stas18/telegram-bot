@@ -26,7 +26,7 @@ module.exports = {
 │ 🎭 <b>Жанр:</b> ${filmInfo.genre}
 │ 🌎 <b>Страна:</b> ${filmInfo.country}
 │ 📅 <b>Год:</b> ${filmInfo.year}
-│ 📖 <b>Описание:</b> ${filmInfo.description || 'Нет описания'}
+│ 📖 <b>Описание:</b> ${filmInfo.description || ' '}
 ${ratingBlock}
 🗓 <b>Дата встречи:</b> ${filmInfo.date}
 ⏰ <b>Время:</b> ${filmInfo.time}

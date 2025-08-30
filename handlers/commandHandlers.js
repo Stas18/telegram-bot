@@ -11,6 +11,10 @@ module.exports = {
       this.ANIMATION_URLS.WELCOME,
       'https://media.giphy.com/media/l0HU20BZ6LbSEITza/giphy.gif',
       'https://media.giphy.com/media/xT5LMGupUKCHm7DdFu/giphy.gif',
+      'https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ2ptYXloNWJ1Ym9jd2l5anJreGFqazR0aXRrN3Yxb3RmcmM1NzJrdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Cmr1OMJ2FN0B2/giphy.gif',
+      'https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExaWcxOWY5dTFibzZvdGlxNjZvMG14OGFvNng2Z29xdmQzenFqMHJ3eCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1kJxyyCq9ZHXX0GM3a/giphy.gif',
+      'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3cTN1N2F1OWVnYjlucGNnMGJhMGt0bW9wOHhiYzVrMWhhZ3N0dDlodCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/7JDXBtIdOErbG/giphy.gif',
+      'https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExNHF1ZG9jMmIwd3I0ZzNjanI2bjd3a3YxMG9pNGcxZG04MHVlc25hMiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/d7fvcrPydrDIVDRkim/giphy.gif',
       this.ANIMATION_URLS.MOVIE
     ];
 

@@ -160,7 +160,7 @@ module.exports = {
       genre: voting.genre,
       country: voting.country,
       year: voting.year,
-      description: voting.description || 'Описание отсутствует',
+      description: voting.description || '',
       average: voting.average,
       participants: Object.keys(voting.ratings).length,
       date: voting.date || new Date().toLocaleDateString('ru-RU'),
@@ -168,38 +168,39 @@ module.exports = {
       discussionNumber: voting.discussionNumber
     };
 
-    this.votingManager.save({
-      ratings: {},
-      average: null,
-      film: null,
-      director: null,
-      genre: null,
-      country: null,
-      year: null,
-      poster: null,
-      discussionNumber: null,
-      date: null,
-      description: null
-    });
-
-    this.historyManager.save([historyEntry]);
-    this.meetingManager.save(this.DEFAULT_MEETING);
-
-    await this.bot.answerCallbackQuery(query.id, { text: 'Сохранение в Google Sheets...' });
+    await this.bot.answerCallbackQuery(query.id, { text: 'Сохранение в GitHub и Google Sheets...' });
 
     try {
-      await this.coreFunctions.uploadHistoryToGoogleSheets();
+      // Используем новую функцию для сохранения в оба места
+      await this.coreFunctions.saveToGitHubAndSheets(historyEntry);
       
-      await this.bot.editMessageText('✅ Результаты голосования сохранены в историю.', {
+      // Сбрасываем голосование ТОЛЬКО после успешного сохранения
+      this.votingManager.save({
+        ratings: {},
+        average: null,
+        film: null,
+        director: null,
+        genre: null,
+        country: null,
+        year: null,
+        poster: null,
+        discussionNumber: null,
+        date: null,
+        description: null
+      });
+
+      this.meetingManager.save(this.DEFAULT_MEETING);
+
+      await this.bot.editMessageText('✅ Результаты сохранены в историю, GitHub и Google Sheets!', {
         chat_id: chatId,
         message_id: query.message.message_id,
         reply_markup: this.menuCreator.createAdminPanel().reply_markup
       });
     } catch (error) {
-      this.logger.error(error, 'saving to Google Sheets');
+      this.logger.error(error, 'saving to GitHub and Google Sheets');
       await this.bot.sendMessage(
         chatId,
-        '✅ Данные сохранены локально, но произошла ошибка при сохранении в Google Sheets'
+        '❌ Произошла ошибка при сохранении в GitHub/Google Sheets. Данные не сохранены.'
       );
     }
   },
@@ -300,50 +301,50 @@ module.exports = {
   },
 
   handleBroadcastNews: async function(query) {
-  const chatId = query.message.chat.id;
-  
-  await this.bot.answerCallbackQuery(query.id, { text: 'Введите текст новости для рассылки' });
-  await this.bot.editMessageText('✉️ <b>Введите текст новости:</b>\n\nФормат: просто текст или HTML-разметка', {
-    chat_id: chatId,
-    message_id: query.message.message_id,
-    parse_mode: 'HTML'
-  });
-  
-  // Ожидаем ответа от администратора
-  const responseListener = async (msg) => {
-    if (msg.from.id.toString() === chatId.toString()) {
-      this.bot.removeListener('message', responseListener);
+    const chatId = query.message.chat.id;
+    
+    await this.bot.answerCallbackQuery(query.id, { text: 'Введите текст новости для рассылки' });
+    await this.bot.editMessageText('✉️ <b>Введите текст новости:</b>\n\nФормат: просто текст или HTML-разметка', {
+      chat_id: chatId,
+      message_id: query.message.message_id,
+      parse_mode: 'HTML'
+    });
+    
+    // Ожидаем ответа от администратора
+    const responseListener = async (msg) => {
+      if (msg.from.id.toString() === chatId.toString()) {
+        this.bot.removeListener('message', responseListener);
 
-      try {
-        await this.bot.deleteMessage(chatId, query.message.message_id);
-      } catch (error) {
-        this.logger.error(error, 'Не удалось удалить сообщение');
-      }
-
-      const subscriptions = this.subscriptionsManager.load();
-      let sentCount = 0;
-
-      for (const subChatId of subscriptions) {
         try {
-          await this.bot.sendMessage(
-            subChatId,
-            `📢 <b>Новость от кино-клуба "Одиссея":</b>\n\n${msg.text}`,
-            { parse_mode: 'HTML' }
-          );
-          sentCount++;
+          await this.bot.deleteMessage(chatId, query.message.message_id);
         } catch (error) {
-          this.logger.error(error, `Ошибка отправки новости для ${subChatId}`);
+          this.logger.error(error, 'Не удалось удалить сообщение');
         }
+
+        const subscriptions = this.subscriptionsManager.load();
+        let sentCount = 0;
+
+        for (const subChatId of subscriptions) {
+          try {
+            await this.bot.sendMessage(
+              subChatId,
+              `📢 <b>Новость от кино-клуба "Одиссея":</b>\n\n${msg.text}`,
+              { parse_mode: 'HTML' }
+            );
+            sentCount++;
+          } catch (error) {
+            this.logger.error(error, `Ошибка отправки новости для ${subChatId}`);
+          }
+        }
+
+        await this.bot.sendMessage(
+          chatId,
+          `✅ Новость разослана ${sentCount} подписчикам`,
+          this.menuCreator.createAdminPanel()
+        );
       }
+    };
 
-      await this.bot.sendMessage(
-        chatId,
-        `✅ Новость разослана ${sentCount} подписчикам`,
-        this.menuCreator.createAdminPanel()
-      );
-    }
-  };
-
-  this.bot.on('message', responseListener);
-}
+    this.bot.on('message', responseListener);
+  }
 };

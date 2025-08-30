@@ -7,8 +7,9 @@ const filePaths = {
   [FILE_KEYS.LOG]: path.join(__dirname, '../logs/bot.log'),
   [FILE_KEYS.SUBSCRIPTIONS]: path.join(__dirname, '../data/subscriptions.json'),
   [FILE_KEYS.VOTING]: path.join(__dirname, '../data/voting.json'),
-  [FILE_KEYS.HISTORY]: path.join(__dirname, '../data/history.json'),
-  [FILE_KEYS.NEXT_MEETING]: path.join(__dirname, '../data/next_meeting.json')
+  [FILE_KEYS.HISTORY]: path.join(__dirname, '../data/films.json'),
+  [FILE_KEYS.NEXT_MEETING]: path.join(__dirname, '../data/next_meeting.json'),
+  [FILE_KEYS.FILMS]: path.join(__dirname, '../data/films.json')
 };
 
 module.exports = {
@@ -27,6 +28,11 @@ module.exports = {
   
   save: (fileKey, data) => {
     try {
+      // Создаем директорию, если её нет
+      const dir = path.dirname(filePaths[fileKey]);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
       fs.writeFileSync(filePaths[fileKey], JSON.stringify(data, null, 2));
     } catch (error) {
       logger.error(error, `saving ${fileKey}`);

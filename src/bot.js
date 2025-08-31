@@ -75,7 +75,7 @@ const dependencies = {
   SPREADSHEET_ID,
   SHEET_NAME,
   CREDENTIALS_PATH: path.join(__dirname, '../config/credentials.json'),
-  GITHUB_TOKEN: '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'
+  GITHUB_TOKEN: process.env.GITHUB_TOKEN
 };
 
 // Initialize githubService

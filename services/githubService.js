@@ -114,5 +114,97 @@ module.exports = {
     } else {
       this.logger.error(`GitHub Error ${context}: ${error.message}`);
     }
+  },
+
+  getNextMeetingSha: async function() {
+  return new Promise((resolve, reject) => {
+    const options = {
+      hostname: 'api.github.com',
+      path: '/repos/ulysses-club/odissea/contents/assets/data/next-meeting.json',
+      method: 'GET',
+      headers: {
+        'Authorization': `token ${this.GITHUB_TOKEN}`,
+        'User-Agent': 'Ulysses-Bot',
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    };
+
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+      res.on('end', () => {
+        if (res.statusCode === 200) {
+          const fileInfo = JSON.parse(data);
+          resolve(fileInfo.sha);
+        } else {
+          this.logger.log('next-meeting.json не найден на GitHub, будет создан новый');
+          resolve(null);
+        }
+      });
+    });
+
+    req.on('error', (error) => {
+      this.logger.error(error, 'Failed to get next-meeting.json SHA from GitHub');
+      reject(error);
+    });
+
+    req.end();
+  });
+},
+
+updateNextMeetingOnGitHub: async function(nextMeetingData) {
+  try {
+    // Получаем текущий SHA файла
+    const sha = await this.getNextMeetingSha();
+    
+    return new Promise((resolve, reject) => {
+      const postData = JSON.stringify({
+        message: 'Bot: Update next meeting information',
+        content: Buffer.from(JSON.stringify(nextMeetingData, null, 2)).toString('base64'),
+        sha: sha
+      });
+
+      const options = {
+        hostname: 'api.github.com',
+        path: '/repos/ulysses-club/odissea/contents/assets/data/next-meeting.json',
+        method: 'PUT',
+        headers: {
+          'Authorization': `token ${this.GITHUB_TOKEN}`,
+          'User-Agent': 'Ulysses-Bot',
+          'Content-Type': 'application/json',
+          'Content-Length': postData.length
+        }
+      };
+
+      const req = https.request(options, (res) => {
+        let data = '';
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
+        res.on('end', () => {
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            this.logger.log('✅ next-meeting.json успешно обновлен на GitHub');
+            resolve(JSON.parse(data));
+          } else {
+            this.logger.error(`GitHub API error: ${res.statusCode} - ${data}`);
+            reject(new Error(`GitHub API error: ${res.statusCode}`));
+          }
+        });
+      });
+
+      req.on('error', (error) => {
+        this.logger.error(error, 'GitHub request for next-meeting.json failed');
+        reject(error);
+      });
+
+      req.write(postData);
+      req.end();
+    });
+  } catch (error) {
+    this.logger.error(`GitHub update error for next-meeting: ${error.message}`);
+    throw error;
   }
+}
 };

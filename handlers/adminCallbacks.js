@@ -206,69 +206,85 @@ module.exports = {
   },
 
   handleAddNextMovie: async function(query) {
-    const chatId = query.message.chat.id;
-    
-    await this.bot.answerCallbackQuery(query.id);
-    await this.bot.editMessageText('Введите информацию о следующем фильме в формате:\n\n' +
-      '<b>Дата|Время|Место|Название|Режиссер|Жанр|Страна|Год|Постер URL|Номер обсуждения|Описание</b>\n\n', {
-      chat_id: chatId,
-      message_id: query.message.message_id,
-      parse_mode: 'HTML'
-    });
+  const chatId = query.message.chat.id;
+  
+  await this.bot.answerCallbackQuery(query.id);
+  await this.bot.editMessageText('Введите информацию о следующем фильме в формате:\n\n' +
+    '<b>Дата|Время|Место|Название|Режиссер|Жанр|Страна|Год|Постер URL|Номер обсуждения|Описание</b>\n\n', {
+    chat_id: chatId,
+    message_id: query.message.message_id,
+    parse_mode: 'HTML'
+  });
 
-    const messageId = query.message.message_id;
-    const responseListener = async (msg) => {
-      if (msg.from.id.toString() === chatId.toString()) {
-        this.bot.removeListener('message', responseListener);
+  const messageId = query.message.message_id;
+  const responseListener = async (msg) => {
+    if (msg.from.id.toString() === chatId.toString()) {
+      this.bot.removeListener('message', responseListener);
 
-        try {
-          await this.bot.deleteMessage(chatId, messageId);
-        } catch (error) {
-          this.logger.error(error, 'deleting message');
-        }
-
-        const parts = msg.text.split('|').map(part => part.trim());
-        if (parts.length === 11) {
-          const nextMeeting = {
-            date: parts[0],
-            time: parts[1],
-            place: parts[2],
-            film: parts[3],
-            director: parts[4],
-            genre: parts[5],
-            country: parts[6],
-            year: parts[7],
-            poster: parts[8],
-            discussionNumber: parts[9],
-            description: parts[10],
-            requirements: this.meetingManager.getCurrent().requirements
-          };
-          this.meetingManager.save(nextMeeting);
-
-          this.votingManager.save({
-            ratings: {},
-            average: null,
-            film: parts[3],
-            director: parts[4],
-            genre: parts[5],
-            country: parts[6],
-            year: parts[7],
-            poster: parts[8],
-            discussionNumber: parts[9],
-            date: parts[0],
-            description: parts[10]
-          });
-
-          await this.bot.sendMessage(chatId, '✅ Информация о следующем фильме сохранена!', this.menuCreator.createMainMenu(true));
-          await this.coreFunctions.sendMeetingInfo(chatId);
-        } else {
-          await this.bot.sendMessage(chatId, '❌ Неверный формат. Попробуйте снова.', this.menuCreator.createMainMenu(true));
-        }
+      try {
+        await this.bot.deleteMessage(chatId, messageId);
+      } catch (error) {
+        this.logger.error(error, 'deleting message');
       }
-    };
 
-    this.bot.on('message', responseListener);
-  },
+      const parts = msg.text.split('|').map(part => part.trim());
+      if (parts.length === 11) {
+        const nextMeeting = {
+          date: parts[0],
+          time: parts[1],
+          place: parts[2],
+          film: parts[3],
+          director: parts[4],
+          genre: parts[5],
+          country: parts[6],
+          year: parts[7],
+          poster: parts[8],
+          discussionNumber: parts[9],
+          description: parts[10],
+          requirements: this.meetingManager.getCurrent().requirements
+        };
+        
+        // Сохраняем локально
+        this.meetingManager.save(nextMeeting);
+
+        this.votingManager.save({
+          ratings: {},
+          average: null,
+          film: parts[3],
+          director: parts[4],
+          genre: parts[5],
+          country: parts[6],
+          year: parts[7],
+          poster: parts[8],
+          discussionNumber: parts[9],
+          date: parts[0],
+          description: parts[10]
+        });
+
+        // Сохраняем на GitHub
+        try {
+          await this.githubService.updateNextMeetingOnGitHub(nextMeeting);
+          await this.bot.sendMessage(chatId, 
+            '✅ Информация о следующем фильме сохранена локально и на GitHub!', 
+            this.menuCreator.createMainMenu(true)
+          );
+        } catch (githubError) {
+          this.logger.error(githubError, 'Failed to update next-meeting on GitHub');
+          await this.bot.sendMessage(chatId, 
+            '✅ Информация сохранена локально, но произошла ошибка при синхронизации с GitHub: ' + githubError.message,
+            this.menuCreator.createMainMenu(true)
+          );
+        }
+        
+        await this.coreFunctions.sendMeetingInfo(chatId);
+      } else {
+        await this.bot.sendMessage(chatId, '❌ Неверный формат. Попробуйте снова.', this.menuCreator.createMainMenu(true));
+      }
+    }
+  };
+
+  this.bot.on('message', responseListener);
+},
 
   handleRatingInput: async function(query, voting) {
     const chatId = query.message.chat.id;

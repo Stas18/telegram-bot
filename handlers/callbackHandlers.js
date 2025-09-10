@@ -1,26 +1,25 @@
 module.exports = {
-  init: function(deps) {
+  init: function (deps) {
     // Сохраняем зависимости
     Object.assign(this, deps);
-    
+
     // Инициализируем подмодули с зависимостями
     this.adminCallbacks = require('./adminCallbacks');
     this.adminCallbacks.init(deps);
-    
+
     this.userCallbacks = require('./userCallbacks');
     this.userCallbacks.init(deps);
   },
 
-  handleAdminCallbacks: async function(query) {
+  handleAdminCallbacks: async function (query) {
     await this.adminCallbacks.handle(query);
   },
 
-  handleUserCallbacks: async function(query) {
+  handleUserCallbacks: async function (query) {
     await this.userCallbacks.handle(query);
   },
 
-  // Новая функция для обработки всех callback
-  handleCallback: async function(query) {
+  handleCallback: async function (query) {
     const chatId = query.message.chat.id;
     const isAdmin = this.ADMIN_IDS.includes(chatId.toString());
 

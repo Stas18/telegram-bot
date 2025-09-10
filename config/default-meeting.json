@@ -1,13 +1,13 @@
 {
   "date": "Дата встречи не указана",
   "time": "Время не указано",
-  "place": "Онлайн (https://telemost.yandex.ru/) / Кофейня \"КиноМан\" (ул. Пушкинская, 42)",
+  "place": "Онлайн (https://telemost.yandex.ru/)",
   "film": "Фильм ещё не выбран",
   "director": "Режиссёр не указан",
   "genre": "Жанр уточняется",
   "country": "Страна производства не указана",
   "year": "Год выхода неизвестен",
-  "poster": "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExYnUwOTkzdTczYmZ2MGg1amlkaDNsNjZ3Mmg1aDJ5OXNsNW5hMWoxdSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/ygsIHxE5xSI4o/giphy.gif",
+  "poster": "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3bXk0dDYwamltMmg4aGNsZGo1NDkwN3FmdnI5a3RjaGZ1aG54bHl2MyZlcD12MV9naWZzX3JlbGF0ZWQmY3Q9Zw/YAlhwn67KT76E/giphy.gif",
   "discussionNumber": "Следующий номер после последнего в истории",
   "description": "После просмотра будет обсуждение с чаем/кофе и печеньками!",
   "requirements": "Рекомендуем посмотреть фильм заранее"

@@ -1,67 +1,7 @@
-[2025-08-30T09:22:34.778Z] Бот успешно запущен!
-[2025-08-30T09:24:39.758Z] ERROR in loading films: this.save is not a function
-[2025-08-30T09:24:58.516Z] ERROR in loading films: this.save is not a function
-[2025-08-30T09:24:59.831Z] ✅ Films.json успешно обновлен на GitHub
-[2025-08-30T09:25:02.636Z] ✅ История успешно загружена в Google Sheets!
-[2025-08-30T09:29:23.340Z] Бот успешно запущен!
-[2025-08-30T09:29:55.682Z] ✅ Films.json успешно обновлен на GitHub
-[2025-08-30T09:29:57.977Z] ✅ История успешно загружена в Google Sheets!
-[2025-08-30T09:39:25.881Z] Бот успешно запущен!
-[2025-08-30T09:40:02.120Z] ✅ Films.json успешно обновлен на GitHub
-[2025-08-30T09:40:04.644Z] ✅ История успешно загружена в Google Sheets!
-[2025-08-30T10:03:12.427Z] ✅ Films.json успешно обновлен на GitHub
-[2025-08-30T10:03:15.037Z] ✅ История успешно загружена в Google Sheets!
-[2025-08-30T10:08:45.396Z] ✅ Films.json успешно обновлен на GitHub
-[2025-08-30T10:08:47.823Z] ✅ История успешно загружена в Google Sheets!
-[2025-08-30T11:28:04.146Z] Бот успешно запущен!
-[2025-08-30T11:29:00.448Z] Бот успешно запущен!
-[2025-08-30T11:30:34.834Z] Films.json не найден на GitHub, создаем новый
-[2025-08-30T11:30:35.028Z] Films.json не найден на GitHub, создаем новый
-[2025-08-30T11:30:35.573Z] ERROR: GitHub API error: 401 - {"message":"Bad credentials","documentation_url":"https://docs.github.com/rest","status":"401"}
-[2025-08-30T11:30:35.573Z] ERROR in saving to GitHub and Sheets: GitHub API error: 401
-[2025-08-30T11:30:35.574Z] ERROR in saving to GitHub and Google Sheets: GitHub API error: 401
-[2025-08-30T11:34:04.634Z] Films.json не найден на GitHub, создаем новый
-[2025-08-30T11:34:04.839Z] Films.json не найден на GitHub, создаем новый
-[2025-08-30T11:34:05.359Z] ERROR: GitHub API error: 401 - {"message":"Bad credentials","documentation_url":"https://docs.github.com/rest","status":"401"}
-[2025-08-30T11:34:05.360Z] ERROR in saving to GitHub and Sheets: GitHub API error: 401
-[2025-08-30T11:34:05.360Z] ERROR in saving to GitHub and Google Sheets: GitHub API error: 401
-[2025-08-30T11:34:17.391Z] Бот успешно запущен!
-[2025-08-30T11:34:34.950Z] Films.json не найден на GitHub, создаем новый
-[2025-08-30T11:34:35.172Z] Films.json не найден на GitHub, создаем новый
-[2025-08-30T11:34:35.670Z] ERROR: GitHub API error: 401 - {"message":"Bad credentials","documentation_url":"https://docs.github.com/rest","status":"401"}
-[2025-08-30T11:34:35.671Z] ERROR in saving to GitHub and Sheets: GitHub API error: 401
-[2025-08-30T11:34:35.671Z] ERROR in saving to GitHub and Google Sheets: GitHub API error: 401
-[2025-08-30T11:37:04.390Z] Бот успешно запущен!
-[2025-08-30T11:37:08.573Z] Films.json не найден на GitHub, создаем новый
-[2025-08-30T11:37:08.770Z] Films.json не найден на GitHub, создаем новый
-[2025-08-30T11:37:09.280Z] ERROR: GitHub API error: 401 - {"message":"Bad credentials","documentation_url":"https://docs.github.com/rest","status":"401"}
-[2025-08-30T11:37:09.281Z] ERROR in saving to GitHub and Sheets: GitHub API error: 401
-[2025-08-30T11:37:09.281Z] ERROR in saving to GitHub and Google Sheets: GitHub API error: 401
-[2025-08-30T11:38:21.454Z] Бот успешно запущен!
-[2025-08-30T11:38:49.912Z] Films.json не найден на GitHub, создаем новый
-[2025-08-30T11:38:50.131Z] Films.json не найден на GitHub, создаем новый
-[2025-08-30T11:38:50.695Z] ERROR: GitHub API error: 401 - {"message":"Bad credentials","documentation_url":"https://docs.github.com/rest","status":"401"}
-[2025-08-30T11:38:50.695Z] ERROR in saving to GitHub and Sheets: GitHub API error: 401
-[2025-08-30T11:38:50.696Z] ERROR in saving to GitHub and Google Sheets: GitHub API error: 401
-[2025-08-30T11:47:51.139Z] Бот успешно запущен!
-[2025-08-30T11:48:01.442Z] ✅ Films.json успешно обновлен на GitHub
-[2025-08-30T11:48:03.994Z] ✅ История успешно загружена в Google Sheets!
-[2025-08-30T11:51:35.299Z] ✅ Films.json успешно обновлен на GitHub
-[2025-08-30T11:51:37.801Z] ✅ История успешно загружена в Google Sheets!
-[2025-08-30T12:04:50.075Z] Бот успешно запущен!
-[2025-08-31T04:37:03.668Z] Бот успешно запущен!
-[2025-08-31T04:38:06.268Z] ✅ Films.json успешно обновлен на GitHub
-[2025-08-31T04:38:08.680Z] ✅ История успешно загружена в Google Sheets!
-[2025-08-31T04:40:17.996Z] ✅ next-meeting.json успешно обновлен на GitHub
-[2025-08-31T04:43:01.058Z] ✅ next-meeting.json успешно обновлен на GitHub
-[2025-08-31T04:45:31.592Z] Бот успешно запущен!
-[2025-08-31T04:48:04.532Z] ✅ next-meeting.json успешно обновлен на GitHub
-[2025-08-31T04:49:39.575Z] ✅ next-meeting.json успешно обновлен на GitHub
-[2025-08-31T04:51:56.277Z] ✅ next-meeting.json успешно обновлен на GitHub
-[2025-08-31T04:55:36.407Z] ✅ next-meeting.json успешно обновлен на GitHub
-[2025-08-31T04:56:48.134Z] ✅ Films.json успешно обновлен на GitHub
-[2025-08-31T04:56:50.560Z] ✅ История успешно загружена в Google Sheets!
-[2025-08-31T05:13:59.987Z] ✅ Films.json успешно обновлен на GitHub
-[2025-08-31T05:14:02.068Z] ✅ История успешно загружена в Google Sheets!
-[2025-08-31T05:15:26.411Z] ✅ next-meeting.json успешно обновлен на GitHub
-[2025-08-31T05:18:50.291Z] ✅ next-meeting.json успешно обновлен на GitHub
+[2025-09-10T07:11:48.760Z] Бот успешно запущен!
+[2025-09-10T07:24:21.439Z] Бот успешно запущен!
+[2025-09-10T07:24:40.388Z] ERROR in showing subscription menu: Cannot read properties of undefined (reading 'SUBSCRIPTION')
+[2025-09-10T07:24:41.195Z] ERROR in showing history: Cannot read properties of undefined (reading 'HISTORY')
+[2025-09-10T07:32:52.728Z] Бот успешно запущен!
+[2025-09-10T07:36:50.856Z] Бот успешно запущен!
+[2025-09-10T07:40:33.883Z] ERROR in Не удалось удалить сообщение: ETELEGRAM: 400 Bad Request: message to delete not found

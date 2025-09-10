@@ -1,13 +1,13 @@
 module.exports = {
-  init: function(deps) {
+  init: function (deps) {
     this.adminCallbacks = deps.adminCallbacks;
     this.userCallbacks = deps.userCallbacks;
     this.logger = deps.logger;
   },
 
-  dispatch: async function(query) {
+  dispatch: async function (query) {
     const chatId = query.message.chat.id;
-    
+
     try {
       if (query.data.startsWith('admin_')) {
         await this.adminCallbacks.handle(query);

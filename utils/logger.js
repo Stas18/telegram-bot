@@ -11,7 +11,7 @@ const logger = {
     fs.appendFileSync(logFilePath, logMessage);
     console.log(logMessage);
   },
-  
+
   error: (error, context = '') => {
     const message = `ERROR${context ? ` in ${context}` : ''}: ${error.message || error}`;
     logger.log(message);

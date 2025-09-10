@@ -16,7 +16,7 @@ module.exports = {
 
     return menu;
   },
-  
+
   createSocialsMenu: () => ({
     reply_markup: {
       inline_keyboard: [
@@ -35,7 +35,6 @@ module.exports = {
       inline_keyboard: [
         [{ text: '⭐ Поставить оценку фильму', callback_data: 'admin_rate_movie' }],
         [{ text: '🧹 Очистить оценки', callback_data: 'admin_clear_votes' }],
-        [{ text: '📨 Разослать результаты', callback_data: 'admin_send_results' }],
         [{ text: '💾 Сохранить в историю', callback_data: 'admin_save_to_history' }],
         [{ text: '🎬 Добавить следующий фильм', callback_data: 'admin_add_next_movie' }],
         [{ text: '📢 Разослать новость', callback_data: 'admin_broadcast_news' }],

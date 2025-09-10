@@ -25,10 +25,9 @@ module.exports = {
       return defaultValue;
     }
   },
-  
+
   save: (fileKey, data) => {
     try {
-      // Создаем директорию, если её нет
       const dir = path.dirname(filePaths[fileKey]);
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });

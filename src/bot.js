@@ -2,13 +2,11 @@ require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 const path = require('path');
 const nodeSchedule = require('node-schedule');
-const { google } = require('googleapis');
 
 // Config imports
 const DEFAULT_MEETING = require('../config/default-meeting.json');
 const {
   ENV_CHECK,
-  FILE_KEYS,
   ANIMATION_URLS,
   SPREADSHEET_ID,
   SHEET_NAME

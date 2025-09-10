@@ -15,9 +15,9 @@ module.exports = {
     date: null,
     description: null
   }),
-  
+
   save: (data) => fileManager.save(FILE_KEYS.VOTING, data),
-  
+
   calculateAverage: (ratings) => {
     const values = Object.values(ratings);
     return values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : null;

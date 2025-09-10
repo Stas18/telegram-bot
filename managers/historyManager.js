@@ -1,4 +1,3 @@
-// Псевдоним для filmsManager для обратной совместимости
 const filmsManager = require('./filmsManager');
 
 const historyManager = {
@@ -7,7 +6,7 @@ const historyManager = {
     const films = filmsManager.load();
     return films.length > 0 ? films[films.length - 1] : null;
   },
-  
+
   // Сохраняем как новую запись в films
   save: (entry) => {
     const films = filmsManager.load();
@@ -15,9 +14,9 @@ const historyManager = {
     filmsManager.save(films);
     return entry;
   },
-  
+
   // Обновляем последнюю запись
-  update: function(entry) {
+  update: function (entry) {
     const films = filmsManager.load();
     if (films.length > 0) {
       films[films.length - 1] = entry;

@@ -13,6 +13,15 @@ const filePaths = {
 };
 
 module.exports = {
+  /**
+ * Загружает данные из JSON-файла по указанному ключу
+ * Если файл не существует, создает его с значением по умолчанию
+ * 
+ * @param {string} fileKey - Ключ файла из FILE_KEYS (LOG, SUBSCRIPTIONS, VOTING, etc.)
+ * @param {*} [defaultValue={}] - Значение по умолчанию, если файл не существует или произошла ошибка
+ * @returns {*} - Данные из файла или значение по умолчанию
+ * @throws {Error} - Логирует ошибку, но не прерывает выполнение
+ */
   load: (fileKey, defaultValue = {}) => {
     try {
       if (!fs.existsSync(filePaths[fileKey])) {
@@ -26,6 +35,15 @@ module.exports = {
     }
   },
 
+  /**
+ * Сохраняет данные в JSON-файл по указанному ключу
+ * Автоматически создает директории, если они не существуют
+ * 
+ * @param {string} fileKey - Ключ файла из FILE_KEYS (LOG, SUBSCRIPTIONS, VOTING, etc.)
+ * @param {*} data - Данные для сохранения (будут преобразованы в JSON)
+ * @returns {void}
+ * @throws {Error} - Логирует ошибку, но не прерывает выполнение
+ */
   save: (fileKey, data) => {
     try {
       const dir = path.dirname(filePaths[fileKey]);

@@ -3,6 +3,18 @@ module.exports = {
     Object.assign(this, deps);
   },
 
+  /**
+ * Основной обработчик callback-запросов от администратора
+ * Делегирует выполнение соответствующим методам в зависимости от данных callback
+ * 
+ * @param {Object} query - Объект callback query от Telegram
+ * @param {string} query.data - Данные callback
+ * @param {Object} query.message - Сообщение, к которому привязан callback
+ * @param {number} query.message.chat.id - ID чата
+ * @param {number} query.message.message_id - ID сообщения
+ * @param {string} query.id - ID callback запроса
+ * @returns {Promise<void>}
+ */
   handle: async function (query) {
     const chatId = query.message.chat.id;
     const voting = this.votingManager.load();
@@ -34,6 +46,15 @@ module.exports = {
     }
   },
 
+  /**
+ * Обрабатывает начало процесса выставления оценок фильму
+ * Инициализирует данные голосования если необходимо и показывает клавиатуру оценок
+ * 
+ * @param {Object} query - Объект callback query
+ * @param {Object} voting - Данные голосования
+ * @param {Object} meeting - Данные о текущей встрече
+ * @returns {Promise<void>}
+ */
   handleRateMovie: async function (query, voting, meeting) {
     const chatId = query.message.chat.id;
 
@@ -65,6 +86,14 @@ module.exports = {
     });
   },
 
+  /**
+ * Завершает процесс ввода оценок и показывает итоговую информацию о фильме
+ * 
+ * @param {Object} query - Объект callback query
+ * @param {Object} voting - Данные голосования
+ * @param {Object} meeting - Данные о текущей встрече
+ * @returns {Promise<void>}
+ */
   handleFinishRating: async function (query, voting, meeting) {
     const chatId = query.message.chat.id;
 
@@ -89,6 +118,13 @@ module.exports = {
     );
   },
 
+  /**
+ * Очищает все результаты голосования и сбрасывает рейтинг
+ * 
+ * @param {Object} query - Объект callback query
+ * @param {Object} voting - Данные голосования
+ * @returns {Promise<void>}
+ */
   handleClearVotes: async function (query, voting) {
     const chatId = query.message.chat.id;
 
@@ -104,6 +140,14 @@ module.exports = {
     });
   },
 
+  /**
+ * Сохраняет результаты голосования в историю, GitHub и Google Sheets
+ * Сбрасывает данные голосования и встречи после успешного сохранения
+ * 
+ * @param {Object} query - Объект callback query
+ * @param {Object} voting - Данные голосования
+ * @returns {Promise<void>}
+ */
   handleSaveToHistory: async function (query, voting) {
     const chatId = query.message.chat.id;
 
@@ -155,7 +199,7 @@ module.exports = {
         reply_markup: this.menuCreator.createAdminPanel().reply_markup
       });
     } catch (error) {
-      this.logger.error(error, 'saving to GitHub and Google Sheets');
+      this.logger.error(error, 'сохранение в GitHub и Google Таблицы');
       await this.bot.sendMessage(
         chatId,
         '❌ Произошла ошибка при сохранении в GitHub/Google Sheets. Данные не сохранены.'
@@ -163,6 +207,14 @@ module.exports = {
     }
   },
 
+  /**
+ * Запрашивает у администратора информацию о следующем фильме
+ * Обрабатывает ввод в формате "Дата|Время|Место|Название|Режиссер|Жанр|Страна|Год|Постер URL|Номер обсуждения|Описание"
+ * Сохраняет данные локально и синхронизирует с GitHub
+ * 
+ * @param {Object} query - Объект callback query
+ * @returns {Promise<void>}
+ */
   handleAddNextMovie: async function (query) {
     const chatId = query.message.chat.id;
 
@@ -182,7 +234,7 @@ module.exports = {
         try {
           await this.bot.deleteMessage(chatId, messageId);
         } catch (error) {
-          this.logger.error(error, 'deleting message');
+          this.logger.error(error, 'удаление сообщения');
         }
 
         const parts = msg.text.split('|').map(part => part.trim());
@@ -227,7 +279,7 @@ module.exports = {
               this.menuCreator.createMainMenu(true)
             );
           } catch (githubError) {
-            this.logger.error(githubError, 'Failed to update next-meeting on GitHub');
+            this.logger.error(githubError, 'Не удалось обновить следующую встречу на GitHub.');
             await this.bot.sendMessage(chatId,
               '✅ Информация сохранена локально, но произошла ошибка при синхронизации с GitHub: ' + githubError.message,
               this.menuCreator.createMainMenu(true)
@@ -244,6 +296,14 @@ module.exports = {
     this.bot.on('message', responseListener);
   },
 
+  /**
+ * Обрабатывает ввод конкретной оценки от администратора
+ * Обновляет данные голосования и показывает обновленное меню
+ * 
+ * @param {Object} query - Объект callback query
+ * @param {Object} voting - Данные голосования
+ * @returns {Promise<void>}
+ */
   handleRatingInput: async function (query, voting) {
     const chatId = query.message.chat.id;
     const rating = parseInt(query.data.split('_')[2]);
@@ -257,6 +317,14 @@ module.exports = {
     await this.showRatingMenu(chatId, query.message.message_id, voting);
   },
 
+  /**
+ * Покажает меню оценок с текущей статистикой голосования
+ * 
+ * @param {number|string} chatId - ID чата
+ * @param {number} messageId - ID сообщения для редактирования
+ * @param {Object} voting - Данные голосования
+ * @returns {Promise<void>}
+ */
   showRatingMenu: async function (chatId, messageId, voting) {
     try {
       const message = `✅ Оценка добавлена!\n\n` +
@@ -270,10 +338,17 @@ module.exports = {
         reply_markup: this.menuCreator.createRatingKeyboard().reply_markup
       });
     } catch (error) {
-      this.logger.error(error, 'showing rating menu');
+      this.logger.error(error, 'показ рейтингового меню');
     }
   },
 
+  /**
+ * Запрашивает у администратора текст новости для рассылки подписчикам
+ * Рассылает новость всем подписанным пользователям
+ * 
+ * @param {Object} query - Объект callback query
+ * @returns {Promise<void>}
+ */
   handleBroadcastNews: async function (query) {
     const chatId = query.message.chat.id;
 

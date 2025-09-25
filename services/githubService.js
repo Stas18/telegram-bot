@@ -1,13 +1,46 @@
 const https = require('https');
 const logger = require('../utils/logger');
 
+/**
+ * Менеджер для взаимодействия с GitHub API
+ * Обеспечивает обновление файлов в репозитории через REST API
+ * 
+ * @namespace githubManager
+ */
 module.exports = {
+  /**
+   * Инициализирует менеджер с зависимостями
+   * 
+   * @function
+   * @param {Object} deps - Зависимости
+   * @param {Object} deps.logger - Логгер для записи событий
+   * @param {string} deps.GITHUB_TOKEN - Токен для аутентификации в GitHub API
+   * @example
+   * githubManager.init({
+   *   logger: console,
+   *   GITHUB_TOKEN: 'ghp_...'
+   * });
+   */
   init: function (deps) {
     this.logger = deps.logger;
     this.GITHUB_TOKEN = deps.GITHUB_TOKEN;
     this.lastSha = null;
   },
 
+  /**
+   * Обновляет файл films.json в репозитории GitHub
+   * Заменяет весь содержимое файла на переданный массив фильмов
+   * 
+   * @function
+   * @param {Array} filmsData - Массив ВСЕХ фильмов для сохранения
+   * @returns {Promise<Object>} Ответ GitHub API
+   * @throws {Error} Если filmsData не массив или ошибка API
+   * @example
+   * await githubManager.updateFilmsOnGitHub([
+   *   { title: 'Фильм 1', year: 2020 },
+   *   { title: 'Фильм 2', year: 2021 }
+   * ]);
+   */
   updateFilmsOnGitHub: async function (filmsData) {
     try {
       // Проверяем, что filmsData является массивом ВСЕХ фильмов
@@ -20,7 +53,7 @@ module.exports = {
 
       return new Promise((resolve, reject) => {
         const postData = JSON.stringify({
-          message: 'Update films.json from bot - added new film',
+          message: 'Обновление films.json от бота — добавлен новый фильм',
           content: Buffer.from(JSON.stringify(filmsData, null, 2)).toString('base64'),
           sha: this.lastSha
         });
@@ -67,6 +100,14 @@ module.exports = {
     }
   },
 
+  /**
+   * Получает SHA хэш текущего файла films.json из GitHub
+   * Необходим для обновления существующего файла
+   * 
+   * @function
+   * @returns {Promise<string|null>} SHA хэш файла или null если файл не существует
+   * @private
+   */
   getCurrentFileSha: async function () {
     return new Promise((resolve, reject) => {
       const options = {
@@ -98,7 +139,7 @@ module.exports = {
       });
 
       req.on('error', (error) => {
-        this.logger.error(error, 'Failed to get file SHA from GitHub');
+        this.logger.error(error, 'Не удалось получить SHA-файл из GitHub.');
         reject(error);
       });
 
@@ -106,6 +147,13 @@ module.exports = {
     });
   },
 
+  /**
+   * Обрабатывает ошибки GitHub API с детализацией
+   * 
+   * @function
+   * @param {Error} error - Объект ошибки
+   * @param {string} [context=''] - Контекст для логирования
+   */
   handleGitHubError: function (error, context = '') {
     if (error.response) {
       this.logger.error(`GitHub API Error ${context}: ${error.response.status} - ${error.response.data}`);
@@ -116,6 +164,14 @@ module.exports = {
     }
   },
 
+  /**
+   * Получает SHA хэш файла next-meeting.json из GitHub
+   * 
+   * @function
+   * @returns {Promise<string|null>} SHA хэш файла или null если файл не существует
+   * @example
+   * const sha = await githubManager.getNextMeetingSha();
+   */
   getNextMeetingSha: async function () {
     return new Promise((resolve, reject) => {
       const options = {
@@ -146,7 +202,7 @@ module.exports = {
       });
 
       req.on('error', (error) => {
-        this.logger.error(error, 'Failed to get next-meeting.json SHA from GitHub');
+        this.logger.error(error, 'Не удалось получить SHA-файл next-meeting.json из GitHub.');
         reject(error);
       });
 
@@ -154,6 +210,19 @@ module.exports = {
     });
   },
 
+  /**
+   * Обновляет файл next-meeting.json в репозитории GitHub
+   * 
+   * @function
+   * @param {Object} nextMeetingData - Данные о следующей встрече
+   * @returns {Promise<Object>} Ответ GitHub API
+   * @example
+   * await githubManager.updateNextMeetingOnGitHub({
+   *   date: '2024-01-15',
+   *   film: 'Интерстеллар',
+   *   location: 'Киноклуб'
+   * });
+   */
   updateNextMeetingOnGitHub: async function (nextMeetingData) {
     try {
       // Получаем текущий SHA файла
@@ -161,7 +230,7 @@ module.exports = {
 
       return new Promise((resolve, reject) => {
         const postData = JSON.stringify({
-          message: 'Bot: Update next meeting information',
+          message: 'Bot: обновить информацию о следующей встрече',
           content: Buffer.from(JSON.stringify(nextMeetingData, null, 2)).toString('base64'),
           sha: sha
         });
@@ -195,7 +264,7 @@ module.exports = {
         });
 
         req.on('error', (error) => {
-          this.logger.error(error, 'GitHub request for next-meeting.json failed');
+          this.logger.error(error, 'Запрос GitHub для next-meeting.json не удался');
           reject(error);
         });
 
@@ -203,7 +272,7 @@ module.exports = {
         req.end();
       });
     } catch (error) {
-      this.logger.error(`GitHub update error for next-meeting: ${error.message}`);
+      this.logger.error(`Ошибка обновления GitHub для следующей встречи: ${error.message}`);
       throw error;
     }
   }

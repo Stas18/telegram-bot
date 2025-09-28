@@ -1,0 +1,48 @@
+[2025-09-25T15:07:49.448Z] Бот успешно запущен!
+[2025-09-25T15:09:07.462Z] Films.json не найден на GitHub, создаем новый
+[2025-09-25T15:09:07.787Z] Films.json не найден на GitHub, создаем новый
+[2025-09-25T15:09:08.533Z] ERROR: GitHub API error: 401 - {
+  "message": "Bad credentials",
+  "documentation_url": "https://docs.github.com/rest",
+  "status": "401"
+}
+[2025-09-25T15:09:08.534Z] ERROR in сохранение в GitHub и Таблицы: GitHub API error: 401
+[2025-09-25T15:09:08.534Z] ERROR in сохранение в GitHub и Google Таблицы: GitHub API error: 401
+[2025-09-25T15:13:00.512Z] Бот успешно запущен!
+[2025-09-25T15:13:08.420Z] ERROR: GitHub API error: 400 - {"message":"Body should be a JSON object","documentation_url":"https://docs.github.com/rest/repos/contents#create-or-update-file-contents","status":"400"}
+[2025-09-25T15:13:08.421Z] ERROR in сохранение в GitHub и Таблицы: GitHub API error: 400
+[2025-09-25T15:13:08.421Z] ERROR in сохранение в GitHub и Google Таблицы: GitHub API error: 400
+[2025-09-25T15:16:28.957Z] Бот успешно запущен!
+[2025-09-25T15:17:05.900Z] ✅ Films.json успешно обновлен на GitHub
+[2025-09-25T15:17:07.750Z] Бот успешно запущен!
+[2025-09-25T15:17:16.301Z] ✅ Films.json успешно обновлен на GitHub
+[2025-09-25T15:17:18.229Z] Бот успешно запущен!
+[2025-09-25T15:27:30.450Z] Бот успешно запущен!
+[2025-09-25T15:27:37.802Z] ✅ История успешно загружена в Google Sheets!
+[2025-09-25T15:27:38.262Z] ✅ Данные успешно сохранены в Google Sheets и GitHub!
+[2025-09-25T15:27:39.268Z] ✅ Films.json успешно обновлен на GitHub
+[2025-09-25T15:27:41.123Z] Бот успешно запущен!
+[2025-09-25T15:38:59.898Z] Бот успешно запущен!
+[2025-09-25T15:39:11.269Z] Бот успешно запущен!
+[2025-09-25T15:40:15.012Z] ✅ История успешно загружена в Google Sheets!
+[2025-09-25T15:40:16.813Z] ✅ Films.json успешно обновлен на GitHub
+[2025-09-25T15:40:16.814Z] ✅ Данные успешно сохранены в Google Sheets и GitHub!
+[2025-09-25T15:44:43.888Z] ERROR: GitHub API error: 400 - {"message":"Body should be a JSON object","documentation_url":"https://docs.github.com/rest/repos/contents#create-or-update-file-contents","status":"400"}
+[2025-09-25T15:44:43.889Z] ERROR in Не удалось обновить следующую встречу на GitHub.: GitHub API error: 400
+[2025-09-25T15:51:30.918Z] ✅ История успешно загружена в Google Sheets!
+[2025-09-25T15:51:32.290Z] ✅ Films.json успешно обновлен на GitHub
+[2025-09-25T15:51:32.291Z] ✅ Данные успешно сохранены в Google Sheets и GitHub!
+[2025-09-25T15:53:43.376Z] ERROR: GitHub API error: 400 - {"message":"Body should be a JSON object","documentation_url":"https://docs.github.com/rest/repos/contents#create-or-update-file-contents","status":"400"}
+[2025-09-25T15:53:43.377Z] ERROR in Не удалось обновить следующую встречу на GitHub.: GitHub API error: 400
+[2025-09-25T16:25:04.466Z] Бот успешно запущен!
+[2025-09-25T16:28:18.891Z] ✅ История успешно загружена в Google Sheets!
+[2025-09-25T16:28:20.492Z] ✅ assets/data/films.json успешно обновлен на GitHub
+[2025-09-25T16:28:20.493Z] ✅ Данные успешно сохранены в Google Sheets и GitHub!
+[2025-09-25T16:30:51.928Z] ✅ assets/data/next-meeting.json успешно обновлен на GitHub
+[2025-09-26T10:00:00.149Z] Бот успешно запущен!
+[2025-09-26T11:00:00.015Z] Запуск еженедельной рассылки
+[2025-09-27T09:15:59.330Z] Бот успешно запущен!
+[2025-09-28T07:49:54.753Z] Бот успешно запущен!
+[2025-09-28T13:36:53.938Z] ✅ История успешно загружена в Google Sheets!
+[2025-09-28T13:36:55.585Z] ✅ assets/data/films.json успешно обновлен на GitHub
+[2025-09-28T13:36:55.585Z] ✅ Данные успешно сохранены в Google Sheets и GitHub!

@@ -175,37 +175,80 @@ module.exports = {
  */
   saveToGitHubAndSheets: async function (historyEntry) {
     try {
-      // 1. Сохраняем в films.json (добавляем в массив всех фильмов)
-      // Убедимся, что используем русские ключи
-      const normalizedEntry = {
-        'Фильм': historyEntry.film || historyEntry['Фильм'],
-        'Режиссер': historyEntry.director || historyEntry['Режиссер'],
-        'Жанр': historyEntry.genre || historyEntry['Жанр'],
-        'Страна': historyEntry.country || historyEntry['Страна'],
-        'Год': historyEntry.year || historyEntry['Год'],
-        'Оценка': historyEntry.average?.toFixed(1) || historyEntry['Оценка'] || 'N/A',
-        'Номер обсуждения': historyEntry.discussionNumber || historyEntry['Номер обсуждения'],
-        'Дата': historyEntry.date || historyEntry['Дата'],
-        'Постер URL': historyEntry.poster || historyEntry['Постер URL'],
-        'Описание': historyEntry.description || historyEntry['Описание'] || ' ',
-        'Участников': historyEntry.participants || historyEntry['Участников'] || 0
-      };
+      // 1. Нормализуем данные к единому формату
+      const normalizedEntry = this.normalizeHistoryEntry(historyEntry);
 
-      const films = this.filmsManager.add(normalizedEntry);
+      // 2. Валидация обязательных полей
+      if (!this.validateHistoryEntry(normalizedEntry)) {
+        throw new Error('Не все обязательные поля заполнены');
+      }
 
-      // 2. Обновляем на GitHub - отправляем ВЕСЬ массив films
-      await this.githubService.getCurrentFileSha();
-      await this.githubService.updateFilmsOnGitHub(films);
-
-      // 3. Сохраняем в Google Sheets только последнюю запись
+      // 3. Сохраняем в Google Sheets
       await this.uploadHistoryToGoogleSheets(normalizedEntry);
 
+      // 4. Сохраняем в films.json (добавляем в массив всех фильмов)
+      const films = this.filmsManager.add(normalizedEntry);
+
+      // 5. Обновляем на GitHub - отправляем ВЕСЬ массив films
+      await this.githubService.updateFilmsOnGitHub(films);
+
+      this.logger.log('✅ Данные успешно сохранены в Google Sheets и GitHub!');
       return true;
     } catch (error) {
       this.logger.error(error, 'сохранение в GitHub и Таблицы');
       throw error;
     }
   },
+
+  /**
+ * Нормализует запись истории к единому формату
+ */
+normalizeHistoryEntry: function (entry) {
+  const normalized = {
+    'Фильм': entry.film || entry['Фильм'] || 'Не указано',
+    'Режиссер': entry.director || entry['Режиссер'] || 'Не указано',
+    'Жанр': entry.genre || entry['Жанр'] || 'Не указано',
+    'Страна': entry.country || entry['Страна'] || 'Не указано',
+    'Год': entry.year || entry['Год'] || 'Не указано',
+    'Оценка': entry.average ? parseFloat(entry.average).toFixed(1) : 
+             entry['Оценка'] ? parseFloat(entry['Оценка']).toFixed(1) : 'N/A',
+    'Номер обсуждения': entry.discussionNumber || entry['Номер обсуждения'] || 
+                       this.calculateNextDiscussionNumber(),
+    'Дата': entry.date || entry['Дата'] || new Date().toLocaleDateString('ru-RU'),
+    'Постер URL': entry.poster || entry['Постер URL'] || '',
+    'Описание': entry.description || entry['Описание'] || '',
+    'Участников': entry.participants || entry['Участников'] || 0
+  };
+
+  // Преобразуем год в число, если возможно
+  if (!isNaN(parseInt(normalized['Год']))) {
+    normalized['Год'] = parseInt(normalized['Год']);
+  }
+
+  return normalized;
+},
+
+/**
+ * Валидирует обязательные поля записи истории
+ */
+validateHistoryEntry: function (entry) {
+  const requiredFields = ['Фильм', 'Режиссер', 'Номер обсуждения', 'Дата'];
+  return requiredFields.every(field => entry[field] && entry[field] !== 'Не указано');
+},
+
+/**
+ * Рассчитывает следующий номер обсуждения
+ */
+calculateNextDiscussionNumber: function () {
+  const films = this.filmsManager.load();
+  if (films.length === 0) return 1;
+  
+  const lastNumber = Math.max(...films.map(film => 
+    parseInt(film['Номер обсуждения'] || film.discussionNumber || 0)
+  ));
+  
+  return lastNumber + 1;
+},
 
   /**
  * Отправляет информацию о текущей встрече в указанный чат
@@ -219,6 +262,23 @@ module.exports = {
       const meeting = this.meetingManager.getCurrent();
       const voting = this.votingManager.load();
       const isAdmin = this.ADMIN_IDS.includes(chatId.toString());
+
+      // Проверяем, есть ли реальные данные о встрече
+      const hasRealMeeting = meeting.film && meeting.film !== 'Фильм ещё не выбран';
+
+      if (!hasRealMeeting) {
+        await this.bot.sendMessage(
+          chatId,
+          '🎬 <b>Информация о следующей встрече</b>\n\n' +
+          'Следующий фильм ещё не выбран. Ожидайте анонса от организаторов! 🍿\n\n' +
+          'Следите за обновлениями в наших соцсетях 👇',
+          {
+            parse_mode: 'HTML',
+            ...this.menuCreator.createSocialsMenu()
+          }
+        );
+        return;
+      }
 
       const message = this.formatter.formatMovieInfo(meeting, voting);
       await this.bot.sendPhoto(chatId, voting.poster || meeting.poster, {
@@ -285,8 +345,11 @@ module.exports = {
       if (!recentFilms || recentFilms.length === 0) {
         return await this.bot.sendMessage(
           chatId,
-          'История оценок пока пуста.',
-          this.menuCreator.createMainMenu(isAdmin)
+          '📜 <b>История оценок</b>\n\nПока нет оцененных фильмов. История будет появляться после обсуждений! 🎬',
+          {
+            parse_mode: 'HTML',
+            ...this.menuCreator.createMainMenu(isAdmin)
+          }
         );
       }
 

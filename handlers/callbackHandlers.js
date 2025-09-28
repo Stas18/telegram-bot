@@ -66,20 +66,39 @@ module.exports = {
     const chatId = query.message.chat.id;
     const isAdmin = this.ADMIN_IDS.includes(chatId.toString());
 
-    // Проверка прав доступа для административных функций
-    if (query.data.startsWith('admin_') && !isAdmin) {
+    try {
+      // Проверка прав доступа для административных функций
+      if (query.data.startsWith('admin_') && !isAdmin) {
+        await this.bot.answerCallbackQuery(query.id, {
+          text: 'Эта функция только для администратора',
+          show_alert: false
+        });
+        return;
+      }
+
+      // Подтверждаем получение callback
       await this.bot.answerCallbackQuery(query.id, {
-        text: 'Эта функция только для администратора',
+        text: '...',
         show_alert: false
       });
-      return;
-    }
 
-    // Маршрутизация callback-запроса в соответствующий обработчик
-    if (query.data.startsWith('admin_')) {
-      await this.handleAdminCallbacks(query);
-    } else {
-      await this.handleUserCallbacks(query);
+      // Маршрутизация callback-запроса
+      if (query.data.startsWith('admin_')) {
+        await this.handleAdminCallbacks(query);
+      } else {
+        await this.handleUserCallbacks(query);
+      }
+    } catch (error) {
+      this.logger.error(error, `обработка callback ${query.data} от ${chatId}`);
+
+      try {
+        await this.bot.answerCallbackQuery(query.id, {
+          text: 'Ошибка обработки запроса',
+          show_alert: false
+        });
+      } catch (e) {
+        this.logger.error(e, 'ответ на callback при ошибке');
+      }
     }
   }
 };

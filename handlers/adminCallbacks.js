@@ -156,6 +156,26 @@ module.exports = {
       return;
     }
 
+    // Проверяем наличие GitHub токена
+    if (!this.GITHUB_TOKEN || this.GITHUB_TOKEN === 'undefined') {
+      await this.bot.answerCallbackQuery(query.id, {
+        text: 'Ошибка: GitHub token не настроен'
+      });
+      return;
+    }
+
+    try {
+      // Сначала проверяем подключение к GitHub
+      await this.githubService.getFileSha('assets/data/films.json');
+    } catch (error) {
+      this.logger.error(error, 'Проверка подключения к GitHub');
+      await this.bot.answerCallbackQuery(query.id, {
+        text: 'Ошибка подключения к GitHub'
+      });
+      return;
+    }
+
+    // Создаем запись истории
     const historyEntry = {
       film: voting.film,
       director: voting.director,
@@ -170,13 +190,15 @@ module.exports = {
       discussionNumber: voting.discussionNumber
     };
 
-    await this.bot.answerCallbackQuery(query.id, { text: 'Сохранение в GitHub и Google Sheets...' });
+    await this.bot.answerCallbackQuery(query.id, {
+      text: 'Сохранение в Google Sheets и GitHub...'
+    });
 
     try {
-      // Используем новую функцию для сохранения в оба места
+      // Сохраняем данные
       await this.coreFunctions.saveToGitHubAndSheets(historyEntry);
 
-      // Сбрасываем голосование ТОЛЬКО после успешного сохранения
+      // ⚠️ Сбрасываем данные ТОЛЬКО после успешного сохранения
       this.votingManager.save({
         ratings: {},
         average: null,
@@ -191,36 +213,64 @@ module.exports = {
         description: null
       });
 
+      // Обновляем встречу на следующую
       this.meetingManager.save(this.DEFAULT_MEETING);
 
-      await this.bot.editMessageText('✅ Результаты сохранены в историю, GitHub и Google Sheets!', {
-        chat_id: chatId,
-        message_id: query.message.message_id,
-        reply_markup: this.menuCreator.createAdminPanel().reply_markup
-      });
+      await this.bot.editMessageText(
+        '✅ Результаты сохранены в историю, GitHub и Google Sheets!\n\n' +
+        'Данные голосования сброшены, встреча обновлена на следующую.',
+        {
+          chat_id: chatId,
+          message_id: query.message.message_id,
+          reply_markup: this.menuCreator.createAdminPanel().reply_markup
+        }
+      );
+
+      // Отправляем информацию о новой встрече
+      await this.coreFunctions.sendMeetingInfo(chatId);
+
     } catch (error) {
       this.logger.error(error, 'сохранение в GitHub и Google Таблицы');
+
+      // НЕ сбрасываем данные при ошибке!
       await this.bot.sendMessage(
         chatId,
-        '❌ Произошла ошибка при сохранении в GitHub/Google Sheets. Данные не сохранены.'
+        `❌ Ошибка при сохранении: ${error.message}\n\n` +
+        'Данные НЕ были сброшены. Попробуйте еще раз.'
+      );
+
+      // Показываем кнопку для повторной попытки
+      await this.bot.sendMessage(
+        chatId,
+        'Повторить попытку сохранения?',
+        {
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '🔄 Повторить сохранение', callback_data: 'admin_save_to_history' }],
+              [{ text: '🔙 Назад в админ-панель', callback_data: 'back_to_main' }]
+            ]
+          }
+        }
       );
     }
   },
 
   /**
- * Запрашивает у администратора информацию о следующем фильме
- * Обрабатывает ввод в формате "Дата|Время|Место|Название|Режиссер|Жанр|Страна|Год|Постер URL|Номер обсуждения|Описание"
- * Сохраняет данные локально и синхронизирует с GitHub
- * 
- * @param {Object} query - Объект callback query
- * @returns {Promise<void>}
- */
+   * Запрашивает у администратора информацию о следующем фильме
+   * Обрабатывает ввод в формате "Дата|Время|Место|Название|Режиссер|Жанр|Страна|Год|Постер URL|Номер обсуждения|Описание"
+   * Сохраняет данные локально и синхронизирует с GitHub
+   * 
+   * @param {Object} query - Объект callback query
+   * @returns {Promise<void>}
+   */
   handleAddNextMovie: async function (query) {
     const chatId = query.message.chat.id;
 
     await this.bot.answerCallbackQuery(query.id);
     await this.bot.editMessageText('Введите информацию о следующем фильме в формате:\n\n' +
-      '<b>Дата|Время|Место|Название|Режиссер|Жанр|Страна|Год|Постер URL|Номер обсуждения|Описание</b>\n\n', {
+      '<b>Дата|Время|Место|Название|Режиссер|Жанр|Страна|Год|Постер URL|Номер обсуждения|Описание</b>\n\n' +
+      '<i>Пример:</i>\n' +
+      '<code>25.12.2024|20:00|Онлайн|Интерстеллар|Кристофер Нолан|Фантастика|США|2014|https://example.com/poster.jpg|15|Фантастика о космических путешествиях</code>', {
       chat_id: chatId,
       message_id: query.message.message_id,
       parse_mode: 'HTML'
@@ -251,7 +301,7 @@ module.exports = {
             poster: parts[8],
             discussionNumber: parts[9],
             description: parts[10],
-            requirements: this.meetingManager.getCurrent().requirements
+            requirements: this.meetingManager.getCurrent().requirements || "Рекомендуем посмотреть фильм заранее"
           };
 
           // Сохраняем локально
@@ -271,9 +321,24 @@ module.exports = {
             description: parts[10]
           });
 
-          // Сохраняем на GitHub
+          // Сохраняем на GitHub с правильным форматом
           try {
-            await this.githubService.updateNextMeetingOnGitHub(nextMeeting);
+            const githubMeetingData = {
+              date: parts[0],
+              time: parts[1],
+              place: parts[2],
+              film: parts[3],
+              director: parts[4],
+              genre: parts[5],
+              country: parts[6],
+              year: isNaN(parseInt(parts[7])) ? parts[7] : parseInt(parts[7]),
+              poster: parts[8],
+              discussionNumber: isNaN(parseInt(parts[9])) ? parts[9] : parseInt(parts[9]),
+              description: parts[10],
+              requirements: "Рекомендуем посмотреть фильм заранее"
+            };
+
+            await this.githubService.updateNextMeetingOnGitHub(githubMeetingData);
             await this.bot.sendMessage(chatId,
               '✅ Информация о следующем фильме сохранена локально и на GitHub!',
               this.menuCreator.createMainMenu(true)
@@ -288,7 +353,11 @@ module.exports = {
 
           await this.coreFunctions.sendMeetingInfo(chatId);
         } else {
-          await this.bot.sendMessage(chatId, '❌ Неверный формат. Попробуйте снова.', this.menuCreator.createMainMenu(true));
+          await this.bot.sendMessage(chatId,
+            `❌ Неверный формат. Ожидается 11 частей, получено ${parts.length}.\n\n` +
+            'Проверьте, что все поля разделены символом | и нет пропущенных значений.',
+            this.menuCreator.createMainMenu(true)
+          );
         }
       }
     };

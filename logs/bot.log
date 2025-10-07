@@ -46,3 +46,75 @@
 [2025-09-28T13:36:53.938Z] ✅ История успешно загружена в Google Sheets!
 [2025-09-28T13:36:55.585Z] ✅ assets/data/films.json успешно обновлен на GitHub
 [2025-09-28T13:36:55.585Z] ✅ Данные успешно сохранены в Google Sheets и GitHub!
+[2025-09-28T20:38:45.340Z] Бот успешно запущен!
+[2025-09-28T21:48:23.723Z] Бот успешно запущен!
+[2025-09-29T16:30:28.063Z] Бот успешно запущен!
+[2025-09-29T20:58:10.827Z] ✅ assets/data/next-meeting.json успешно обновлен на GitHub
+[2025-09-29T21:03:38.501Z] Бот успешно запущен!
+[2025-09-29T21:04:05.080Z] Бот успешно запущен!
+[2025-09-29T21:05:16.568Z] Бот успешно запущен!
+[2025-09-30T08:13:20.942Z] Бот успешно запущен!
+[2025-10-01T14:13:22.350Z] Бот успешно запущен!
+[2025-10-02T19:39:22.402Z] Бот успешно запущен!
+[2025-10-02T20:02:17.932Z] Бот успешно запущен!
+[2025-10-03T08:45:11.280Z] Бот успешно запущен!
+[2025-10-03T08:45:11.722Z] ERROR in отправка начального сообщения 5323499522: ETELEGRAM: 403 Forbidden: bot was blocked by the user
+[2025-10-03T09:25:21.965Z] Бот успешно запущен!
+[2025-10-03T11:00:00.021Z] Запуск еженедельной рассылки
+[2025-10-04T08:20:10.452Z] Бот успешно запущен!
+[2025-10-05T07:54:16.165Z] Бот успешно запущен!
+[2025-10-05T14:10:15.064Z] ✅ История успешно загружена в Google Sheets!
+[2025-10-05T14:10:16.754Z] ✅ assets/data/films.json успешно обновлен на GitHub
+[2025-10-05T14:10:16.755Z] ✅ Данные успешно сохранены в Google Sheets и GitHub!
+[2025-10-06T17:12:10.807Z] Бот успешно запущен!
+[2025-10-06T21:30:45.508Z] Бот успешно запущен!
+[2025-10-06T21:30:55.397Z] ERROR in отправка элемента истории Mio min Mio/Мио, мой Мио: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-06T21:30:55.608Z] ERROR in отправка элемента истории Suna no onna/Женщина в песках: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-06T21:31:53.420Z] Бот успешно запущен!
+[2025-10-06T21:31:53.805Z] ERROR in отправка элемента истории Mio min Mio/Мио, мой Мио: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-06T21:31:54.001Z] ERROR in отправка элемента истории Suna no onna/Женщина в песках: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-06T21:32:05.627Z] ERROR in отправка элемента истории Mio min Mio/Мио, мой Мио: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-06T21:32:05.841Z] ERROR in отправка элемента истории Suna no onna/Женщина в песках: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-06T21:33:43.767Z] Бот успешно запущен!
+[2025-10-06T21:33:44.183Z] ERROR in отправка элемента истории Mio min Mio/Мио, мой Мио: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-06T21:33:44.382Z] ERROR in отправка элемента истории Suna no onna/Женщина в песках: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-06T21:33:50.590Z] ERROR in отправка элемента истории Mio min Mio/Мио, мой Мио: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-06T21:33:50.806Z] ERROR in отправка элемента истории Suna no onna/Женщина в песках: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-06T21:35:44.726Z] Бот успешно запущен!
+[2025-10-06T21:35:45.649Z] ERROR in отправка элемента истории Mio min Mio/Мио, мой Мио: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-06T21:35:45.841Z] ERROR in отправка элемента истории Suna no onna/Женщина в песках: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-06T21:45:03.450Z] Бот успешно запущен!
+[2025-10-06T22:03:03.070Z] Бот успешно запущен!
+[2025-10-06T22:03:44.726Z] Бот успешно запущен!
+[2025-10-06T22:03:46.630Z] ERROR in отправка элемента истории Mio min Mio/Мио, мой Мио: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-06T22:03:46.832Z] ERROR in отправка элемента истории Suna no onna/Женщина в песках: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-06T22:03:52.725Z] ERROR in отправка элемента истории Mio min Mio/Мио, мой Мио: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-06T22:03:52.960Z] ERROR in отправка элемента истории Suna no onna/Женщина в песках: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-06T22:05:42.598Z] ERROR in отправка элемента истории Mio min Mio/Мио, мой Мио: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-06T22:05:42.800Z] ERROR in отправка элемента истории Suna no onna/Женщина в песках: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-06T22:07:13.150Z] Постер скачан: chyornoe_beloe.jpg
+[2025-10-06T22:07:14.295Z] ✅ assets/data/next-meeting.json успешно обновлен на GitHub
+[2025-10-06T22:07:14.479Z] ERROR in отправка информации о встрече 1147849296: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-06T22:12:03.620Z] ERROR in отправка информации о встрече 1147849296: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-06T22:12:09.690Z] Бот успешно запущен!
+[2025-10-06T22:12:10.088Z] ERROR in отправка информации о встрече 1147849296: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-06T22:12:34.638Z] Бот успешно запущен!
+[2025-10-06T22:14:45.925Z] Бот успешно запущен!
+[2025-10-06T22:14:49.499Z] ERROR in отправка элемента истории Mio min Mio/Мио, мой Мио: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-06T22:14:49.695Z] ERROR in отправка элемента истории Suna no onna/Женщина в песках: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-07T07:50:40.908Z] Бот успешно запущен!
+[2025-10-07T11:47:33.891Z] Бот успешно запущен!
+[2025-10-07T11:47:42.286Z] ERROR in отправка элемента истории Mio min Mio/Мио, мой Мио: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-07T11:47:42.515Z] ERROR in отправка элемента истории Suna no onna/Женщина в песках: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-07T11:48:19.413Z] Бот успешно запущен!
+[2025-10-07T11:48:20.091Z] ERROR in отправка элемента истории Mio min Mio/Мио, мой Мио: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-07T11:48:20.289Z] ERROR in отправка элемента истории Suna no onna/Женщина в песках: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-07T11:48:30.838Z] Бот успешно запущен!
+[2025-10-07T11:48:31.486Z] ERROR in отправка элемента истории Mio min Mio/Мио, мой Мио: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-07T11:48:31.698Z] ERROR in отправка элемента истории Suna no onna/Женщина в песках: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-07T11:48:46.514Z] Бот успешно запущен!
+[2025-10-07T11:48:46.900Z] ERROR in отправка элемента истории Mio min Mio/Мио, мой Мио: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-07T11:48:47.118Z] ERROR in отправка элемента истории Suna no onna/Женщина в песках: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-07T12:02:19.918Z] Бот успешно запущен!
+[2025-10-07T12:02:28.551Z] ERROR in отправка элемента истории Mio min Mio/Мио, мой Мио: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-07T12:02:28.807Z] ERROR in отправка элемента истории Suna no onna/Женщина в песках: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified

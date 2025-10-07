@@ -1,13 +1,13 @@
 {
   "ratings": {},
   "average": null,
-  "film": null,
-  "director": null,
-  "genre": null,
-  "country": null,
-  "year": null,
-  "poster": null,
-  "discussionNumber": null,
-  "date": null,
-  "description": null
+  "film": "чёрное/белое 🏁",
+  "director": "Режиссер",
+  "genre": "Жанр",
+  "country": "Страна",
+  "year": "1999",
+  "poster": "../images/poster/chyornoe_beloe.jpg",
+  "discussionNumber": "9999",
+  "date": "21.10.2025",
+  "description": "Описание+"
 }

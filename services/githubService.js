@@ -40,7 +40,8 @@ module.exports = {
             "Content-Type": "application/json",
             "Content-Length": Buffer.byteLength(postData),
           },
-          timeout: 10000
+          timeout: 10000,
+          signal: AbortSignal.timeout(15000)
         };
 
         return await new Promise((resolve, reject) => {
@@ -77,6 +78,11 @@ module.exports = {
 
         if (attempt === MAX_RETRIES) {
           throw new Error(`Не удалось после ${MAX_RETRIES} попыток: ${error.message}`);
+        }
+
+        if (error.name === 'TimeoutError' || error.code === 'ECONNRESET') {
+          this.logger.error(`Таймаут или разрыв соединения при попытке ${attempt}`);
+          continue; // Продолжаем повторные попытки
         }
 
         await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * attempt));

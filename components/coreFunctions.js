@@ -204,25 +204,57 @@ module.exports = {
  * Нормализует запись истории к единому формату
  */
 normalizeHistoryEntry: function (entry) {
-  const normalized = {
-    'Фильм': entry.film || entry['Фильм'] || 'Не указано',
-    'Режиссер': entry.director || entry['Режиссер'] || 'Не указано',
-    'Жанр': entry.genre || entry['Жанр'] || 'Не указано',
-    'Страна': entry.country || entry['Страна'] || 'Не указано',
-    'Год': entry.year || entry['Год'] || 'Не указано',
-    'Оценка': entry.average ? parseFloat(entry.average).toFixed(1) : 
-             entry['Оценка'] ? parseFloat(entry['Оценка']).toFixed(1) : 'N/A',
-    'Номер обсуждения': entry.discussionNumber || entry['Номер обсуждения'] || 
-                       this.calculateNextDiscussionNumber(),
-    'Дата': entry.date || entry['Дата'] || new Date().toLocaleDateString('ru-RU'),
-    'Постер URL': entry.poster || entry['Постер URL'] || '',
-    'Описание': entry.description || entry['Описание'] || '',
-    'Участников': entry.participants || entry['Участников'] || 0
+  // Приводим все ключи к русскому формату
+  const source = {
+    'Фильм': entry.film || entry['Фильм'],
+    'Режиссер': entry.director || entry['Режиссер'], 
+    'Жанр': entry.genre || entry['Жанр'],
+    'Страна': entry.country || entry['Страна'],
+    'Год': entry.year || entry['Год'],
+    'Оценка': entry.average || entry['Оценка'],
+    'Номер обсуждения': entry.discussionNumber || entry['Номер обсуждения'],
+    'Дата': entry.date || entry['Дата'],
+    'Постер URL': entry.poster || entry['Постер URL'],
+    'Описание': entry.description || entry['Описание'],
+    'Участников': entry.participants || entry['Участников']
   };
 
-  // Преобразуем год в число, если возможно
-  if (!isNaN(parseInt(normalized['Год']))) {
-    normalized['Год'] = parseInt(normalized['Год']);
+  const normalized = {};
+  
+  // Обрабатываем каждое поле с дефолтными значениями
+  const fieldDefaults = {
+    'Фильм': 'Не указано',
+    'Режиссер': 'Не указано', 
+    'Жанр': 'Не указано',
+    'Страна': 'Не указано',
+    'Год': 'Не указано',
+    'Оценка': 'N/A',
+    'Номер обсуждения': this.calculateNextDiscussionNumber(),
+    'Дата': new Date().toLocaleDateString('ru-RU'),
+    'Постер URL': '',
+    'Описание': '',
+    'Участников': 0
+  };
+
+  for (const [key, defaultValue] of Object.entries(fieldDefaults)) {
+    let value = source[key];
+    
+    if (value === undefined || value === null || value === '') {
+      value = defaultValue;
+    }
+    
+    // Специальная обработка для числовых полей
+    if (key === 'Оценка' && value !== 'N/A') {
+      value = parseFloat(value).toFixed(1);
+    } else if (key === 'Год' && !isNaN(parseInt(value))) {
+      value = parseInt(value);
+    } else if (key === 'Участников') {
+      value = parseInt(value) || 0;
+    } else if (key === 'Номер обсуждения') {
+      value = parseInt(value) || defaultValue;
+    }
+    
+    normalized[key] = value;
   }
 
   return normalized;
@@ -243,11 +275,13 @@ calculateNextDiscussionNumber: function () {
   const films = this.filmsManager.load();
   if (films.length === 0) return 1;
   
-  const lastNumber = Math.max(...films.map(film => 
-    parseInt(film['Номер обсуждения'] || film.discussionNumber || 0)
-  ));
+  // Находим максимальный номер обсуждения среди всех фильмов
+  const lastNumber = Math.max(...films.map(film => {
+    const num = parseInt(film['Номер обсуждения'] || film.discussionNumber || 0);
+    return isNaN(num) ? 0 : num;
+  }));
   
-  return lastNumber + 1;
+  return lastNumber > 0 ? lastNumber + 1 : 1;
 },
 
   /**

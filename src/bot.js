@@ -9,6 +9,8 @@ require('dotenv').config();
 const TelegramBot = require('node-telegram-bot-api');
 const path = require('path');
 const nodeSchedule = require('node-schedule');
+const vkService = require('../services/vkService');
+const vkConfig = require('../config/vk-config');
 
 // Импорт конфигурации
 const DEFAULT_MEETING = require('../config/default-meeting.json');
@@ -121,8 +123,15 @@ const dependencies = {
   SPREADSHEET_ID,
   SHEET_NAME,
   CREDENTIALS_PATH: path.join(__dirname, '../config/credentials.json'),
-  GITHUB_TOKEN: process.env.GITHUB_TOKEN
+  GITHUB_TOKEN: process.env.GITHUB_TOKEN,
+  vkService,
 };
+
+vkService.init({
+  logger: logger,
+  VK_ACCESS_TOKEN: process.env.VK_ACCESS_TOKEN,
+  VK_GROUP_ID: process.env.VK_GROUP_ID || vkConfig.VK_GROUP_ID
+});
 
 // Инициализировать githubService
 githubService.init({
@@ -145,6 +154,7 @@ bot.onText(/\/subscribers/, (msg) => commandHandlers.subscribers(msg));
 bot.onText(/\/restart/, (msg) => commandHandlers.restart(msg));
 bot.onText(/\/checkadmin/, (msg) => commandHandlers.checkadmin(msg));
 bot.onText(/\/test_sheets/, (msg) => commandHandlers.test_sheets(msg));
+bot.onText(/\/test_vk/, (msg) => commandHandlers.test_vk(msg));
 
 /**
  * Обработчик обычных текстовых сообщений (не команд)

@@ -1,6 +1,179 @@
+const vkPostManager = require('../managers/vkPostManager');
+
 module.exports = {
   init: function (deps) {
     Object.assign(this, deps);
+    this.vkPostManager = vkPostManager;
+  },
+
+  /**
+ * Обрабатывает публикацию поста в VK
+ */
+  handlePublishVK: async function (query) {
+    const chatId = query.message.chat.id;
+    const meeting = this.meetingManager.getCurrent();
+
+    // Проверяем наличие реальных данных о встрече
+    const hasRealMeeting = meeting.film && meeting.film !== 'Фильм ещё не выбран';
+
+    if (!hasRealMeeting) {
+      await this.bot.answerCallbackQuery(query.id, {
+        text: 'Нет данных о встрече для публикации'
+      });
+      return;
+    }
+
+    // Валидируем данные встречи
+    const validation = this.vkPostManager.validateMeetingData(meeting);
+    if (!validation.valid) {
+      await this.bot.answerCallbackQuery(query.id, {
+        text: `Не заполнены обязательные поля: ${validation.missingFields.join(', ')}`
+      });
+      return;
+    }
+
+    try {
+      // Форматируем пост
+      const postContent = this.vkPostManager.formatPostContent(meeting);
+
+      // Показываем превью поста
+      await this.bot.editMessageText(
+        `📝 <b>Превью поста для VK:</b>\n\n<code>${postContent}</code>\n\n` +
+        `Отправить пост в группу VK?`,
+        {
+          chat_id: chatId,
+          message_id: query.message.message_id,
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [
+                { text: '✅ Опубликовать', callback_data: 'admin_confirm_vk_publish' },
+                { text: '✏️ Редактировать', callback_data: 'admin_edit_vk_post' }
+              ],
+              [{ text: '🔙 Назад', callback_data: 'back_to_main' }]
+            ]
+          }
+        }
+      );
+
+      // Сохраняем пост во временное хранилище
+      this.tempVkPost = postContent;
+
+    } catch (error) {
+      this.logger.error(error, 'подготовка поста VK');
+      await this.bot.answerCallbackQuery(query.id, {
+        text: 'Ошибка при подготовке поста'
+      });
+    }
+  },
+
+  /**
+   * Подтверждает и публикует пост в VK
+   */
+  handleConfirmVKPublish: async function (query) {
+    const chatId = query.message.chat.id;
+
+    if (!this.tempVkPost) {
+      await this.bot.answerCallbackQuery(query.id, {
+        text: 'Нет данных поста для публикации'
+      });
+      return;
+    }
+
+    await this.bot.answerCallbackQuery(query.id, {
+      text: 'Публикация поста в VK...'
+    });
+
+    try {
+      // Публикуем пост через VK сервис
+      const result = await this.vkService.publishPost(this.tempVkPost);
+
+      await this.bot.editMessageText(
+        '✅ Пост успешно опубликован в группе VK!\n\n' +
+        `Ссылка на пост: https://vk.com/club199046020`,
+        {
+          chat_id: chatId,
+          message_id: query.message.message_id,
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '🔙 В админ-панель', callback_data: 'back_to_main' }]
+            ]
+          }
+        }
+      );
+
+      // Очищаем временные данные
+      this.tempVkPost = null;
+
+    } catch (error) {
+      this.logger.error(error, 'публикация поста VK');
+
+      await this.bot.editMessageText(
+        `❌ Ошибка при публикации поста в VK:\n<code>${error.message}</code>`,
+        {
+          chat_id: chatId,
+          message_id: query.message.message_id,
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: '🔄 Попробовать снова', callback_data: 'admin_publish_vk' }],
+              [{ text: '🔙 Назад', callback_data: 'back_to_main' }]
+            ]
+          }
+        }
+      );
+    }
+  },
+
+  /**
+   * Редактирует пост перед публикацией
+   */
+  handleEditVKPost: async function (query) {
+    const chatId = query.message.chat.id;
+
+    await this.bot.answerCallbackQuery(query.id, {
+      text: 'Введите новый текст поста'
+    });
+
+    await this.bot.editMessageText(
+      '✏️ <b>Редактирование поста для VK:</b>\n\n' +
+      'Отправьте новый текст поста. Вы можете использовать HTML-разметку.\n\n' +
+      '<i>Текущий текст:</i>\n' +
+      `<code>${this.tempVkPost}</code>`,
+      {
+        chat_id: chatId,
+        message_id: query.message.message_id,
+        parse_mode: 'HTML'
+      }
+    );
+
+    // Ожидаем ввода нового текста
+    const responseListener = async (msg) => {
+      if (msg.from.id.toString() === chatId.toString()) {
+        this.bot.removeListener('message', responseListener);
+
+        this.tempVkPost = msg.text;
+
+        await this.bot.sendMessage(
+          chatId,
+          '✅ Текст поста обновлен!\n\n' +
+          'Хотите опубликовать его сейчас?',
+          {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  { text: '✅ Опубликовать', callback_data: 'admin_confirm_vk_publish' },
+                  { text: '👀 Предпросмотр', callback_data: 'admin_publish_vk' }
+                ],
+                [{ text: '🔙 Отмена', callback_data: 'back_to_main' }]
+              ]
+            }
+          }
+        );
+      }
+    };
+
+    this.bot.on('message', responseListener);
   },
 
   /**
@@ -24,6 +197,9 @@ module.exports = {
       await this.bot.answerCallbackQuery(query.id, { text: 'Обработка...', show_alert: false });
 
       const adminHandlers = {
+        admin_publish_vk: async () => this.handlePublishVK(query),
+        admin_confirm_vk_publish: async () => this.handleConfirmVKPublish(query),
+        admin_edit_vk_post: async () => this.handleEditVKPost(query),
         admin_rate_movie: async () => this.handleRateMovie(query, voting, meeting),
         admin_finish_rating: async () => this.handleFinishRating(query, voting, meeting),
         admin_clear_votes: async () => this.handleClearVotes(query, voting),
@@ -257,7 +433,7 @@ module.exports = {
 
   /**
    * Запрашивает у администратора информацию о следующем фильме
-   * Обрабатывает ввод в формате "Дата|Время|Место|Название|Режиссер|Жанр|Страна|Год|Постер URL|Номер обсуждения|Описание"
+   * Обрабатывает ввод в формате "Дата|Время|Место|Название|Режиссер|Жанр|Страна|Год|Постер URL|Номер обсуждения|В главных ролях"
    * Сохраняет данные локально и синхронизирует с GitHub
    * 
    * @param {Object} query - Объект callback query
@@ -268,9 +444,9 @@ module.exports = {
 
     await this.bot.answerCallbackQuery(query.id);
     await this.bot.editMessageText('Введите информацию о следующем фильме в формате:\n\n' +
-      '<b>Дата|Время|Место|Название|Режиссер|Жанр|Страна|Год|Постер URL|Номер обсуждения|Описание</b>\n\n' +
+      '<b>Дата|Время|Место|Название|Режиссер|Жанр|Страна|Год|Постер URL|Номер обсуждения|В главных ролях</b>\n\n' +
       '<i>Пример:</i>\n' +
-      '<code>25.12.2024|20:00|Онлайн|Интерстеллар|Кристофер Нолан|Фантастика|США|2014|https://example.com/poster.jpg|15|Фантастика о космических путешествиях</code>', {
+      '<code>25.12.2024|20:00|Онлайн|Интерстеллар|Кристофер Нолан|Фантастика|США|2014|https://example.com/poster.jpg|15|Мэттью Макконахи, Энн Хэтэуэй, Джессика Честейн</code>', {
       chat_id: chatId,
       message_id: query.message.message_id,
       parse_mode: 'HTML'
@@ -300,7 +476,7 @@ module.exports = {
             year: parts[7],
             poster: parts[8],
             discussionNumber: parts[9],
-            description: parts[10],
+            cast: parts[10],
             requirements: this.meetingManager.getCurrent().requirements || "Рекомендуем посмотреть фильм заранее"
           };
 
@@ -318,7 +494,7 @@ module.exports = {
             poster: parts[8],
             discussionNumber: parts[9],
             date: parts[0],
-            description: parts[10]
+            cast: parts[10]
           });
 
           // Сохраняем на GitHub с правильным форматом
@@ -334,7 +510,7 @@ module.exports = {
               year: isNaN(parseInt(parts[7])) ? parts[7] : parseInt(parts[7]),
               poster: parts[8],
               discussionNumber: isNaN(parseInt(parts[9])) ? parts[9] : parseInt(parts[9]),
-              description: parts[10],
+              cast: parts[10],
               requirements: "Рекомендуем посмотреть фильм заранее"
             };
 

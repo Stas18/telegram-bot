@@ -208,4 +208,31 @@ module.exports = {
       "Попытка синхронизации с Google Sheets завершена"
     );
   },
+
+  test_vk: async (msg) => {
+    if (!this.ADMIN_IDS.includes(msg.from.id.toString())) return;
+
+    try {
+      await this.bot.sendMessage(msg.chat.id, "🔗 Проверка подключения к VK...");
+
+      const connectionTest = await this.vkService.testConnection();
+
+      if (connectionTest.success) {
+        await this.bot.sendMessage(
+          msg.chat.id,
+          `✅ VK подключение успешно!\n\n` +
+          `Группа: ${connectionTest.groupName}\n` +
+          `Адрес: vk.com/${connectionTest.screenName}`
+        );
+      } else {
+        await this.bot.sendMessage(
+          msg.chat.id,
+          `❌ Ошибка подключения к VK:\n${connectionTest.error}`
+        );
+      }
+    } catch (error) {
+      this.logger.error(error, 'тестирование VK подключения');
+      await this.bot.sendMessage(msg.chat.id, `❌ Ошибка: ${error.message}`);
+    }
+  }
 };

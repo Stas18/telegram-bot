@@ -33,7 +33,17 @@ module.exports = {
    * @returns {Promise<void>}
    */
   handleAdminCallbacks: async function (query) {
-    await this.adminCallbacks.handle(query);
+    const adminHandlers = {
+      'admin_publish_vk': () => this.adminCallbacks.handlePublishVK(query),
+      'admin_confirm_vk_publish': () => this.adminCallbacks.handleConfirmVKPublish(query),
+      'admin_edit_vk_post': () => this.adminCallbacks.handleEditVKPost(query)
+    };
+
+    if (adminHandlers[query.data]) {
+      await adminHandlers[query.data]();
+    } else {
+      await this.adminCallbacks.handle(query);
+    }
   },
 
   /**

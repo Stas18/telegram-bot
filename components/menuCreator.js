@@ -57,6 +57,7 @@ module.exports = {
         [{ text: '💾 Сохранить в историю', callback_data: 'admin_save_to_history' }],
         [{ text: '🎬 Добавить следующий фильм', callback_data: 'admin_add_next_movie' }],
         [{ text: '📢 Разослать новость', callback_data: 'admin_broadcast_news' }],
+        [{ text: '🔵 Опубликовать в VK', callback_data: 'admin_publish_vk' }],
         [{ text: '🔙 Назад', callback_data: 'back_to_main' }]
       ]
     }

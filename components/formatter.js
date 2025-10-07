@@ -57,6 +57,8 @@ module.exports = {
       `├───────────────\n`
       : '';
 
+    const castBlock = filmInfo.cast ? `│ 👥 <b>В главных ролях:</b> ${filmInfo.cast}\n` : '';
+
     return `
 🎬 <b>${filmInfo.film.toUpperCase()}</b>
 
@@ -66,12 +68,12 @@ module.exports = {
 │ 🎭 <b>Жанр:</b> ${filmInfo.genre}
 │ 🌎 <b>Страна:</b> ${filmInfo.country}
 │ 📅 <b>Год:</b> ${filmInfo.year}
-${ratingBlock}
+${castBlock}${ratingBlock}
 🗓 <b>Дата встречи:</b> ${filmInfo.date}
 ⏰ <b>Время:</b> ${filmInfo.time}
 📍 <b>Место:</b> ${filmInfo.place}
 
 🔢 <b>Обсуждение №${filmInfo.discussionNumber}</b>
-    `.trim();
+  `.trim();
   }
 };

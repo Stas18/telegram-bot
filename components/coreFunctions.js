@@ -46,34 +46,34 @@ module.exports = {
   },
 
   /**
- * Загружает запись истории в Google Sheets
- * 
- * @param {Object} historyEntry - Объект с данными о фильме
- * @param {string} historyEntry.film - Название фильма (английский ключ)
- * @param {string} historyEntry ['Фильм'] - Название фильма (русский ключ)
- * @param {string} historyEntry.director - Режиссер (английский ключ)
- * @param {string} historyEntry ['Режиссер'] - Режиссер (русский ключ)
- * @param {string} historyEntry.genre - Жанр (английский ключ)
- * @param {string} historyEntry ['Жанр'] - Жанр (русский ключ)
- * @param {string} historyEntry.country - Страна (английский ключ)
- * @param {string} historyEntry ['Страна'] - Страна (русский ключ)
- * @param {number} historyEntry.year - Год (английский ключ)
- * @param {number} historyEntry ['Год'] - Год (русский ключ)
- * @param {number} historyEntry.average - Средняя оценка (английский ключ)
- * @param {number} historyEntry ['Оценка'] - Средняя оценка (русский ключ)
- * @param {number} historyEntry.discussionNumber - Номер обсуждения (английский ключ)
- * @param {number} historyEntry ['Номер обсуждения'] - Номер обсуждения (русский ключ)
- * @param {string} historyEntry.date - Дата (английский ключ)
- * @param {string} historyEntry ['Дата'] - Дата (русский ключ)
- * @param {string} historyEntry.poster - URL постера (английский ключ)
- * @param {string} historyEntry ['Постер URL'] - URL постера (русский ключ)
- * @param {string} historyEntry.description - Описание (английский ключ)
- * @param {string} historyEntry ['Описание'] - Описание (русский ключ)
- * @param {number} historyEntry.participants - Количество участников (английский ключ)
- * @param {number} historyEntry ['Участников'] - Количество участников (русский ключ)
- * @returns {Promise<boolean>} - true если запись успешно загружена
- * @throws {Error} - В случае ошибки загрузки
- */
+   * Загружает запись истории в Google Sheets
+   * 
+   * @param {Object} historyEntry - Объект с данными о фильме
+   * @param {string} historyEntry.film - Название фильма (английский ключ)
+   * @param {string} historyEntry ['Фильм'] - Название фильма (русский ключ)
+   * @param {string} historyEntry.director - Режиссер (английский ключ)
+   * @param {string} historyEntry ['Режиссер'] - Режиссер (русский ключ)
+   * @param {string} historyEntry.genre - Жанр (английский ключ)
+   * @param {string} historyEntry ['Жанр'] - Жанр (русский ключ)
+   * @param {string} historyEntry.country - Страна (английский ключ)
+   * @param {string} historyEntry ['Страна'] - Страна (русский ключ)
+   * @param {number} historyEntry.year - Год (английский ключ)
+   * @param {number} historyEntry ['Год'] - Год (русский ключ)
+   * @param {number} historyEntry.average - Средняя оценка (английский ключ)
+   * @param {number} historyEntry ['Оценка'] - Средняя оценка (русский ключ)
+   * @param {number} historyEntry.discussionNumber - Номер обсуждения (английский ключ)
+   * @param {number} historyEntry ['Номер обсуждения'] - Номер обсуждения (русский ключ)
+   * @param {string} historyEntry.date - Дата (английский ключ)
+   * @param {string} historyEntry ['Дата'] - Дата (русский ключ)
+   * @param {string} historyEntry.poster - URL постера (английский ключ)
+   * @param {string} historyEntry ['Постер URL'] - URL постера (русский ключ)
+   * @param {string} historyEntry.cast - В главных ролях (английский ключ)
+   * @param {string} historyEntry ['В главных ролях'] - В главных ролях (русский ключ)
+   * @param {number} historyEntry.participants - Количество участников (английский ключ)
+   * @param {number} historyEntry ['Участников'] - Количество участников (русский ключ)
+   * @returns {Promise<boolean>} - true если запись успешно загружена
+   * @throws {Error} - В случае ошибки загрузки
+   */
   uploadHistoryToGoogleSheets: async function (historyEntry) {
     try {
       const auth = new google.auth.GoogleAuth({
@@ -95,7 +95,7 @@ module.exports = {
           historyEntry.discussionNumber || historyEntry['Номер обсуждения'],
           historyEntry.date || historyEntry['Дата'],
           historyEntry.poster || historyEntry['Постер URL'],
-          historyEntry.description || historyEntry['Описание'] || ' ',
+          historyEntry.cast || historyEntry['В главных ролях'] || ' ',
           historyEntry.participants || historyEntry['Участников'] || 0
         ]
       ];
@@ -116,7 +116,7 @@ module.exports = {
             resource: {
               values: [[
                 'Фильм', 'Режиссер', 'Жанр', 'Страна', 'Год', 'Оценка',
-                'Номер обсуждения', 'Дата', 'Постер URL', 'Описание', 'Участников'
+                'Номер обсуждения', 'Дата', 'Постер URL', 'В главных ролях', 'Участников'
               ]],
             },
           });
@@ -130,7 +130,7 @@ module.exports = {
           resource: {
             values: [[
               'Фильм', 'Режиссер', 'Жанр', 'Страна', 'Год', 'Оценка',
-              'Номер обсуждения', 'Дата', 'Постер URL', 'Описание', 'Участников'
+              'Номер обсуждения', 'Дата', 'Постер URL', 'В главных ролях', 'Участников'
             ]],
           },
         });
@@ -155,24 +155,24 @@ module.exports = {
   },
 
   /**
- * Сохраняет запись истории в GitHub и Google Sheets
- * Нормализует данные к русским ключам и сохраняет в обоих хранилищах
- * 
- * @param {Object} historyEntry - Объект с данными о фильме
- * @param {string} historyEntry.film - Название фильма
- * @param {string} historyEntry.director - Режиссер
- * @param {string} historyEntry.genre - Жанр
- * @param {string} historyEntry.country - Страна
- * @param {number} historyEntry.year - Год
- * @param {number} historyEntry.average - Средняя оценка
- * @param {number} historyEntry.discussionNumber - Номер обсуждения
- * @param {string} historyEntry.date - Дата
- * @param {string} historyEntry.poster - URL постера
- * @param {string} historyEntry.description - Описание
- * @param {number} historyEntry.participants - Количество участников
- * @returns {Promise<boolean>} - true если сохранение успешно
- * @throws {Error} - В случае ошибки сохранения
- */
+   * Сохраняет запись истории в GitHub и Google Sheets
+   * Нормализует данные к русским ключам и сохраняет в обоих хранилищах
+   * 
+   * @param {Object} historyEntry - Объект с данными о фильме
+   * @param {string} historyEntry.film - Название фильма
+   * @param {string} historyEntry.director - Режиссер
+   * @param {string} historyEntry.genre - Жанр
+   * @param {string} historyEntry.country - Страна
+   * @param {number} historyEntry.year - Год
+   * @param {number} historyEntry.average - Средняя оценка
+   * @param {number} historyEntry.discussionNumber - Номер обсуждения
+   * @param {string} historyEntry.date - Дата
+   * @param {string} historyEntry.poster - URL постера
+   * @param {string} historyEntry.cast - В главных ролях
+   * @param {number} historyEntry.participants - Количество участников
+   * @returns {Promise<boolean>} - true если сохранение успешно
+   * @throws {Error} - В случае ошибки сохранения
+   */
   saveToGitHubAndSheets: async function (historyEntry) {
     try {
       // 1. Нормализуем данные к единому формату
@@ -201,88 +201,88 @@ module.exports = {
   },
 
   /**
- * Нормализует запись истории к единому формату
- */
-normalizeHistoryEntry: function (entry) {
-  // Приводим все ключи к русскому формату
-  const source = {
-    'Фильм': entry.film || entry['Фильм'],
-    'Режиссер': entry.director || entry['Режиссер'], 
-    'Жанр': entry.genre || entry['Жанр'],
-    'Страна': entry.country || entry['Страна'],
-    'Год': entry.year || entry['Год'],
-    'Оценка': entry.average || entry['Оценка'],
-    'Номер обсуждения': entry.discussionNumber || entry['Номер обсуждения'],
-    'Дата': entry.date || entry['Дата'],
-    'Постер URL': entry.poster || entry['Постер URL'],
-    'Описание': entry.description || entry['Описание'],
-    'Участников': entry.participants || entry['Участников']
-  };
+   * Нормализует запись истории к единому формату
+   */
+  normalizeHistoryEntry: function (entry) {
+    // Приводим все ключи к русскому формату
+    const source = {
+      'Фильм': entry.film || entry['Фильм'],
+      'Режиссер': entry.director || entry['Режиссер'],
+      'Жанр': entry.genre || entry['Жанр'],
+      'Страна': entry.country || entry['Страна'],
+      'Год': entry.year || entry['Год'],
+      'Оценка': entry.average || entry['Оценка'],
+      'Номер обсуждения': entry.discussionNumber || entry['Номер обсуждения'],
+      'Дата': entry.date || entry['Дата'],
+      'Постер URL': entry.poster || entry['Постер URL'],
+      'В главных ролях': entry.cast || entry['В главных ролях'],
+      'Участников': entry.participants || entry['Участников']
+    };
 
-  const normalized = {};
-  
-  // Обрабатываем каждое поле с дефолтными значениями
-  const fieldDefaults = {
-    'Фильм': 'Не указано',
-    'Режиссер': 'Не указано', 
-    'Жанр': 'Не указано',
-    'Страна': 'Не указано',
-    'Год': 'Не указано',
-    'Оценка': 'N/A',
-    'Номер обсуждения': this.calculateNextDiscussionNumber(),
-    'Дата': new Date().toLocaleDateString('ru-RU'),
-    'Постер URL': '',
-    'Описание': '',
-    'Участников': 0
-  };
+    const normalized = {};
 
-  for (const [key, defaultValue] of Object.entries(fieldDefaults)) {
-    let value = source[key];
-    
-    if (value === undefined || value === null || value === '') {
-      value = defaultValue;
+    // Обрабатываем каждое поле с дефолтными значениями
+    const fieldDefaults = {
+      'Фильм': 'Не указано',
+      'Режиссер': 'Не указано',
+      'Жанр': 'Не указано',
+      'Страна': 'Не указано',
+      'Год': 'Не указано',
+      'Оценка': 'N/A',
+      'Номер обсуждения': this.calculateNextDiscussionNumber(),
+      'Дата': new Date().toLocaleDateString('ru-RU'),
+      'Постер URL': '',
+      'В главных ролях': '',
+      'Участников': 0
+    };
+
+    for (const [key, defaultValue] of Object.entries(fieldDefaults)) {
+      let value = source[key];
+
+      if (value === undefined || value === null || value === '') {
+        value = defaultValue;
+      }
+
+      // Специальная обработка для числовых полей
+      if (key === 'Оценка' && value !== 'N/A') {
+        value = parseFloat(value).toFixed(1);
+      } else if (key === 'Год' && !isNaN(parseInt(value))) {
+        value = parseInt(value);
+      } else if (key === 'Участников') {
+        value = parseInt(value) || 0;
+      } else if (key === 'Номер обсуждения') {
+        value = parseInt(value) || defaultValue;
+      }
+
+      normalized[key] = value;
     }
-    
-    // Специальная обработка для числовых полей
-    if (key === 'Оценка' && value !== 'N/A') {
-      value = parseFloat(value).toFixed(1);
-    } else if (key === 'Год' && !isNaN(parseInt(value))) {
-      value = parseInt(value);
-    } else if (key === 'Участников') {
-      value = parseInt(value) || 0;
-    } else if (key === 'Номер обсуждения') {
-      value = parseInt(value) || defaultValue;
-    }
-    
-    normalized[key] = value;
-  }
 
-  return normalized;
-},
+    return normalized;
+  },
 
-/**
- * Валидирует обязательные поля записи истории
- */
-validateHistoryEntry: function (entry) {
-  const requiredFields = ['Фильм', 'Режиссер', 'Номер обсуждения', 'Дата'];
-  return requiredFields.every(field => entry[field] && entry[field] !== 'Не указано');
-},
+  /**
+   * Валидирует обязательные поля записи истории
+   */
+  validateHistoryEntry: function (entry) {
+    const requiredFields = ['Фильм', 'Режиссер', 'Номер обсуждения', 'Дата'];
+    return requiredFields.every(field => entry[field] && entry[field] !== 'Не указано');
+  },
 
-/**
- * Рассчитывает следующий номер обсуждения
- */
-calculateNextDiscussionNumber: function () {
-  const films = this.filmsManager.load();
-  if (films.length === 0) return 1;
-  
-  // Находим максимальный номер обсуждения среди всех фильмов
-  const lastNumber = Math.max(...films.map(film => {
-    const num = parseInt(film['Номер обсуждения'] || film.discussionNumber || 0);
-    return isNaN(num) ? 0 : num;
-  }));
-  
-  return lastNumber > 0 ? lastNumber + 1 : 1;
-},
+  /**
+   * Рассчитывает следующий номер обсуждения
+   */
+  calculateNextDiscussionNumber: function () {
+    const films = this.filmsManager.load();
+    if (films.length === 0) return 1;
+
+    // Находим максимальный номер обсуждения среди всех фильмов
+    const lastNumber = Math.max(...films.map(film => {
+      const num = parseInt(film['Номер обсуждения'] || film.discussionNumber || 0);
+      return isNaN(num) ? 0 : num;
+    }));
+
+    return lastNumber > 0 ? lastNumber + 1 : 1;
+  },
 
   /**
  * Отправляет информацию о текущей встрече в указанный чат
@@ -364,12 +364,12 @@ calculateNextDiscussionNumber: function () {
   },
 
   /**
- * Отображает историю оценок фильмов (последние 2 записи)
- * Для каждого фильма показывает подробную информацию с постером
- * 
- * @param {number|string} chatId - ID чата для отправки сообщения
- * @returns {Promise<void>}
- */
+   * Отображает историю оценок фильмов (последние 2 записи)
+   * Для каждого фильма показывает подробную информацию с постером
+   * 
+   * @param {number|string} chatId - ID чата для отправки сообщения
+   * @returns {Promise<void>}
+   */
   showHistory: async function (chatId) {
     try {
       // Получаем последние 2 фильма из общего массива
@@ -393,7 +393,7 @@ calculateNextDiscussionNumber: function () {
         const genre = item['Жанр'] || item.genre;
         const country = item['Страна'] || item.country;
         const year = item['Год'] || item.year;
-        const description = item['Описание'] || item.description;
+        const cast = item['В главных ролях'] || item.cast;
         const average = item['Оценка'] || item.average;
         const discussionNumber = item['Номер обсуждения'] || item.discussionNumber;
         const date = item['Дата'] || item.date;
@@ -402,11 +402,11 @@ calculateNextDiscussionNumber: function () {
 
         const message = `📜 <b>История оценок:</b>\n\n` +
           `🎥 <b>${this.formatter.escapeHtml(film)}</b>\n` +
-          `📝 <b>Описание:</b> ${description || ' '}\n` +
           `🎭 <b>Жанр:</b> ${genre || 'не указан'}\n` +
           `🌎 <b>Страна:</b> ${country || 'не указана'}\n` +
           `📅 <b>Год:</b> ${year || 'не указан'}\n` +
           `🎬 <b>Режиссер:</b> ${director || 'не указан'}\n` +
+          `👥 <b>В главных ролях:</b> ${cast || 'не указаны'}\n` +
           `🔢 <b>Номер обсуждения:</b> ${discussionNumber}\n` +
           `🗓 <b>Дата:</b> ${date}\n` +
           `⭐ <b>Средняя оценка:</b> ${average || 'N/A'}/10\n` +

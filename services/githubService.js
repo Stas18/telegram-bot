@@ -121,7 +121,7 @@ module.exports = {
       year: nextMeetingData.year || '',
       poster: nextMeetingData.poster || '',
       discussionNumber: nextMeetingData.discussionNumber || '',
-      description: nextMeetingData.description || '',
+      cast: nextMeetingData.cast || '',
       requirements: nextMeetingData.requirements || "Рекомендуем посмотреть фильм заранее"
     };
 

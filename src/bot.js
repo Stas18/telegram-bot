@@ -124,7 +124,7 @@ const dependencies = {
   SHEET_NAME,
   CREDENTIALS_PATH: path.join(__dirname, '../config/credentials.json'),
   GITHUB_TOKEN: process.env.GITHUB_TOKEN,
-  vkService,
+  vkService: vkService,
 };
 
 vkService.init({
@@ -235,8 +235,7 @@ bot.on('message', async (msg) => {
 });
 
 /**
- * Специализированный обработчик для интерактивной игры
- * Обрабатывает callback'и связанные с игровой механикой
+ * Обработчик callback запросов
  */
 bot.on('callback_query', async (query) => {
   try {

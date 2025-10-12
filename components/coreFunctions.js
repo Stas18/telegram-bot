@@ -83,20 +83,20 @@ module.exports = {
 
       const sheets = google.sheets({ version: 'v4', auth });
 
-      // Используем русские названия полей
+      // Используем русские названия полей из normalizedEntry
       const values = [
         [
-          historyEntry.film || historyEntry['Фильм'],
-          historyEntry.director || historyEntry['Режиссер'],
-          historyEntry.genre || historyEntry['Жанр'],
-          historyEntry.country || historyEntry['Страна'],
-          historyEntry.year || historyEntry['Год'],
-          historyEntry.average?.toFixed(1) || historyEntry['Оценка'] || 'N/A',
-          historyEntry.discussionNumber || historyEntry['Номер обсуждения'],
-          historyEntry.date || historyEntry['Дата'],
-          historyEntry.poster || historyEntry['Постер URL'],
-          historyEntry.cast || historyEntry['В главных ролях'] || ' ',
-          historyEntry.participants || historyEntry['Участников'] || 0
+          historyEntry['Фильм'] || historyEntry.film,
+          historyEntry['Режиссер'] || historyEntry.director,
+          historyEntry['Жанр'] || historyEntry.genre,
+          historyEntry['Страна'] || historyEntry.country,
+          historyEntry['Год'] || historyEntry.year,
+          historyEntry['Оценка'] || historyEntry.average?.toFixed(1) || 'N/A',
+          historyEntry['Номер обсуждения'] || historyEntry.discussionNumber,
+          historyEntry['Дата'] || historyEntry.date,
+          historyEntry['Постер URL'] || historyEntry.poster,
+          historyEntry['В главных ролях'] || historyEntry.cast || ' ',
+          historyEntry['Участников'] || historyEntry.participants || 0
         ]
       ];
 
@@ -108,7 +108,7 @@ module.exports = {
         });
 
         // Если нет данных, добавляем заголовки
-        if (!response.data.values) {
+        if (!response.data.values || response.data.values.length === 0) {
           await sheets.spreadsheets.values.update({
             spreadsheetId: this.SPREADSHEET_ID,
             range: `${this.SHEET_NAME}!A1:K1`,
@@ -123,23 +123,27 @@ module.exports = {
         }
       } catch (error) {
         // Если лист не существует, создаем его с заголовками
-        await sheets.spreadsheets.values.update({
-          spreadsheetId: this.SPREADSHEET_ID,
-          range: `${this.SHEET_NAME}!A1:K1`,
-          valueInputOption: 'RAW',
-          resource: {
-            values: [[
-              'Фильм', 'Режиссер', 'Жанр', 'Страна', 'Год', 'Оценка',
-              'Номер обсуждения', 'Дата', 'Постер URL', 'В главных ролях', 'Участников'
-            ]],
-          },
-        });
+        if (error.code === 400) {
+          await sheets.spreadsheets.values.update({
+            spreadsheetId: this.SPREADSHEET_ID,
+            range: `${this.SHEET_NAME}!A1:K1`,
+            valueInputOption: 'RAW',
+            resource: {
+              values: [[
+                'Фильм', 'Режиссер', 'Жанр', 'Страна', 'Год', 'Оценка',
+                'Номер обсуждения', 'Дата', 'Постер URL', 'В главных ролях', 'Участников'
+              ]],
+            },
+          });
+        } else {
+          throw error;
+        }
       }
 
-      // Добавляем только последнюю запись
-      await sheets.spreadsheets.values.append({
+      // Добавляем новую запись
+      const appendResponse = await sheets.spreadsheets.values.append({
         spreadsheetId: this.SPREADSHEET_ID,
-        range: `${this.SHEET_NAME}!A2:K`,
+        range: `${this.SHEET_NAME}!A:K`,
         valueInputOption: 'RAW',
         resource: {
           values: values,
@@ -147,6 +151,7 @@ module.exports = {
       });
 
       this.logger.log('✅ История успешно загружена в Google Sheets!');
+      this.logger.log(`Добавлена запись: ${historyEntry['Фильм'] || historyEntry.film}`);
       return true;
     } catch (error) {
       this.logger.error(error, 'загрузить историю в Google Таблицы');
@@ -175,8 +180,12 @@ module.exports = {
    */
   saveToGitHubAndSheets: async function (historyEntry) {
     try {
+      this.logger.log('Начало сохранения истории...');
+      this.logger.log(`Входные данные: ${JSON.stringify(historyEntry, null, 2)}`);
+
       // 1. Нормализуем данные к единому формату
       const normalizedEntry = this.normalizeHistoryEntry(historyEntry);
+      this.logger.log(`Нормализованные данные: ${JSON.stringify(normalizedEntry, null, 2)}`);
 
       // 2. Валидация обязательных полей
       if (!this.validateHistoryEntry(normalizedEntry)) {
@@ -184,12 +193,17 @@ module.exports = {
       }
 
       // 3. Сохраняем в Google Sheets
+      this.logger.log('Сохранение в Google Sheets...');
       await this.uploadHistoryToGoogleSheets(normalizedEntry);
 
       // 4. Сохраняем в films.json (добавляем в массив всех фильмов)
-      const films = this.filmsManager.add(normalizedEntry);
+      this.logger.log('Сохранение в локальную историю...');
+      const films = this.filmsManager.load();
+      films.push(normalizedEntry);
+      this.filmsManager.save(films);
 
       // 5. Обновляем на GitHub - отправляем ВЕСЬ массив films
+      this.logger.log('Синхронизация с GitHub...');
       await this.githubService.updateFilmsOnGitHub(films);
 
       this.logger.log('✅ Данные успешно сохранены в Google Sheets и GitHub!');
@@ -205,19 +219,7 @@ module.exports = {
    */
   normalizeHistoryEntry: function (entry) {
     // Приводим все ключи к русскому формату
-    const source = {
-      'Фильм': entry.film || entry['Фильм'],
-      'Режиссер': entry.director || entry['Режиссер'],
-      'Жанр': entry.genre || entry['Жанр'],
-      'Страна': entry.country || entry['Страна'],
-      'Год': entry.year || entry['Год'],
-      'Оценка': entry.average || entry['Оценка'],
-      'Номер обсуждения': entry.discussionNumber || entry['Номер обсуждения'],
-      'Дата': entry.date || entry['Дата'],
-      'Постер URL': entry.poster || entry['Постер URL'],
-      'В главных ролях': entry.cast || entry['В главных ролях'],
-      'Участников': entry.participants || entry['Участников']
-    };
+    const source = entry;
 
     const normalized = {};
 
@@ -237,27 +239,59 @@ module.exports = {
     };
 
     for (const [key, defaultValue] of Object.entries(fieldDefaults)) {
-      let value = source[key];
-
-      if (value === undefined || value === null || value === '') {
-        value = defaultValue;
-      }
+      let value = source[key] ||
+        source[key.toLowerCase()] ||
+        this.getEnglishKeyValue(source, key) ||
+        defaultValue;
 
       // Специальная обработка для числовых полей
-      if (key === 'Оценка' && value !== 'N/A') {
-        value = parseFloat(value).toFixed(1);
-      } else if (key === 'Год' && !isNaN(parseInt(value))) {
-        value = parseInt(value);
+      if (key === 'Оценка') {
+        if (value !== 'N/A' && value !== null && value !== undefined) {
+          const numValue = parseFloat(value);
+          value = !isNaN(numValue) ? numValue.toFixed(1) : 'N/A';
+        }
+      } else if (key === 'Год') {
+        const yearValue = parseInt(value);
+        value = !isNaN(yearValue) ? yearValue : defaultValue;
       } else if (key === 'Участников') {
-        value = parseInt(value) || 0;
+        const participantsValue = parseInt(value);
+        value = !isNaN(participantsValue) ? participantsValue : 0;
       } else if (key === 'Номер обсуждения') {
-        value = parseInt(value) || defaultValue;
+        const discussionValue = parseInt(value);
+        value = !isNaN(discussionValue) ? discussionValue : defaultValue;
+      }
+
+      // Если значение пустое, используем значение по умолчанию
+      if (value === undefined || value === null || value === '') {
+        value = defaultValue;
       }
 
       normalized[key] = value;
     }
 
     return normalized;
+  },
+
+  /**
+   * Получает значение по английскому ключу
+   */
+  getEnglishKeyValue: function (source, russianKey) {
+    const keyMap = {
+      'Фильм': 'film',
+      'Режиссер': 'director',
+      'Жанр': 'genre',
+      'Страна': 'country',
+      'Год': 'year',
+      'Оценка': 'average',
+      'Номер обсуждения': 'discussionNumber',
+      'Дата': 'date',
+      'Постер URL': 'poster',
+      'В главных ролях': 'cast',
+      'Участников': 'participants'
+    };
+
+    const englishKey = keyMap[russianKey];
+    return source[englishKey];
   },
 
   /**

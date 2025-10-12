@@ -353,7 +353,7 @@ module.exports = {
       return;
     }
 
-    // Создаем запись истории
+    // Создаем запись истории с правильной структурой
     const historyEntry = {
       film: voting.film,
       director: voting.director,
@@ -364,8 +364,9 @@ module.exports = {
       average: voting.average,
       participants: Object.keys(voting.ratings).length,
       date: voting.date || new Date().toLocaleDateString('ru-RU'),
-      poster: voting.poster,
-      discussionNumber: voting.discussionNumber
+      poster: voting.poster || '',
+      discussionNumber: voting.discussionNumber,
+      cast: voting.cast || ''
     };
 
     await this.bot.answerCallbackQuery(query.id, {
@@ -373,17 +374,11 @@ module.exports = {
     });
 
     try {
-      // Загружаем существующие фильмы из истории
-      const existingFilms = this.filmsManager.load();
-
-      // Добавляем новую запись к существующим
-      const updatedFilms = [...existingFilms, historyEntry];
-
-      // Сохраняем обновленный список фильмов
-      await this.githubService.updateFilmsOnGitHub(updatedFilms);
+      // Сохраняем через coreFunctions (включает оба хранилища)
+      await this.coreFunctions.saveToGitHubAndSheets(historyEntry);
 
       // ⚠️ Сбрасываем данные ТОЛЬКО после успешного сохранения
-      this.votingManager.save({
+      const resetData = {
         ratings: {},
         average: null,
         film: null,
@@ -394,18 +389,25 @@ module.exports = {
         poster: null,
         discussionNumber: null,
         date: null,
-        description: null
-      });
+        description: null,
+        cast: null
+      };
+
+      this.votingManager.save(resetData);
 
       // Обновляем встречу на следующую
       this.meetingManager.save(this.DEFAULT_MEETING);
 
       await this.bot.editMessageText(
         '✅ Результаты сохранены в историю, GitHub и Google Sheets!\n\n' +
+        `Фильм: ${historyEntry.film}\n` +
+        `Средняя оценка: ${historyEntry.average.toFixed(1)}/10\n` +
+        `Участников: ${historyEntry.participants}\n\n` +
         'Данные голосования сброшены, встреча обновлена на следующую.',
         {
           chat_id: chatId,
           message_id: query.message.message_id,
+          parse_mode: 'HTML',
           reply_markup: this.menuCreator.createAdminPanel().reply_markup
         }
       );
@@ -420,7 +422,10 @@ module.exports = {
       await this.bot.sendMessage(
         chatId,
         `❌ Ошибка при сохранении: ${error.message}\n\n` +
-        'Данные НЕ были сброшены. Попробуйте еще раз.'
+        'Данные НЕ были сброшены. Попробуйте еще раз.',
+        {
+          parse_mode: 'HTML'
+        }
       );
 
       // Показываем кнопку для повторной попытки
@@ -481,9 +486,9 @@ module.exports = {
             director: parts[4],
             genre: parts[5],
             country: parts[6],
-            year: parts[7],
+            year: parseInt(parts[7]) || parts[7],
             poster: parts[8],
-            discussionNumber: parts[9],
+            discussionNumber: parseInt(parts[9]) || parts[9],
             cast: parts[10],
             requirements: this.meetingManager.getCurrent().requirements || "Рекомендуем посмотреть фильм заранее"
           };
@@ -491,6 +496,7 @@ module.exports = {
           // Сохраняем локально
           this.meetingManager.save(nextMeeting);
 
+          // Сохраняем данные для голосования
           this.votingManager.save({
             ratings: {},
             average: null,
@@ -498,31 +504,17 @@ module.exports = {
             director: parts[4],
             genre: parts[5],
             country: parts[6],
-            year: parts[7],
+            year: parseInt(parts[7]) || parts[7],
             poster: parts[8],
-            discussionNumber: parts[9],
+            discussionNumber: parseInt(parts[9]) || parts[9],
             date: parts[0],
-            cast: parts[10]
+            cast: parts[10],
+            description: ''
           });
 
-          // Сохраняем на GitHub с правильным форматом
+          // Сохраняем на GitHub
           try {
-            const githubMeetingData = {
-              date: parts[0],
-              time: parts[1],
-              place: parts[2],
-              film: parts[3],
-              director: parts[4],
-              genre: parts[5],
-              country: parts[6],
-              year: isNaN(parseInt(parts[7])) ? parts[7] : parseInt(parts[7]),
-              poster: parts[8],
-              discussionNumber: isNaN(parseInt(parts[9])) ? parts[9] : parseInt(parts[9]),
-              cast: parts[10],
-              requirements: "Рекомендуем посмотреть фильм заранее"
-            };
-
-            await this.githubService.updateNextMeetingOnGitHub(githubMeetingData);
+            await this.githubService.updateNextMeetingOnGitHub(nextMeeting);
             await this.bot.sendMessage(chatId,
               '✅ Информация о следующем фильме сохранена локально и на GitHub!',
               this.menuCreator.createMainMenu(true)

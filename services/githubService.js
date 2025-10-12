@@ -24,6 +24,7 @@ module.exports = {
         // Получаем текущий SHA файла
         const sha = await this.getFileSha(filePath);
 
+        // Правильное кодирование контента
         const postData = JSON.stringify({
           message: commitMessage,
           content: Buffer.from(JSON.stringify(content, null, 2)).toString("base64"),

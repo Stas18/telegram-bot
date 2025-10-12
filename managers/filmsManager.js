@@ -43,7 +43,7 @@ const filmsManager = {
     const films = this.load();
     films.push(film);
     this.save(films);
-    return films;
+    return film; // Возвращаем добавленный фильм, а не весь массив
   },
 
   /**
@@ -125,7 +125,7 @@ const filmsManager = {
   getNextDiscussionNumber: function () {
     const films = this.load();
     if (films.length === 0) return 1;
-    
+
     const maxNumber = Math.max(...films.map(film => parseInt(film.discussionNumber) || 0));
     return maxNumber + 1;
   },
@@ -153,13 +153,13 @@ const filmsManager = {
   delete: function (discussionNumber) {
     const films = this.load();
     const index = films.findIndex(film => film.discussionNumber == discussionNumber);
-    
+
     if (index !== -1) {
       films.splice(index, 1);
       this.save(films);
       return true;
     }
-    
+
     return false;
   },
 

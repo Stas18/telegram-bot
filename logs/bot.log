@@ -3,3 +3,46 @@
 [2025-10-12T13:37:03.862Z] ✅ assets/data/films.json успешно обновлен на GitHub
 [2025-10-12T13:37:08.292Z] ERROR in отправка элемента истории Mio min Mio/Мио, мой Мио: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
 [2025-10-12T13:37:08.483Z] ERROR in отправка элемента истории Suna no onna/Женщина в песках: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-12T13:43:01.037Z] ERROR in отправка элемента истории Suna no onna/Женщина в песках: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-12T14:28:40.530Z] Бот успешно запущен!
+[2025-10-12T14:28:54.056Z] ERROR in отправка элемента истории Suna no onna/Женщина в песках: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-12T14:29:34.225Z] ✅ assets/data/next-meeting.json успешно обновлен на GitHub
+[2025-10-12T14:31:04.556Z] Начало сохранения истории...
+[2025-10-12T14:31:04.556Z] Входные данные: {
+  "film": "All Eyez on Me/2pac: Легенда",
+  "director": "Бенни Бум",
+  "genre": "биография, музыка, драма",
+  "country": "США",
+  "year": 2017,
+  "description": "",
+  "average": 7.166666666666667,
+  "participants": 6,
+  "date": "20.10.2025",
+  "poster": "https://sun9-81.userapi.com/s/v1/ig2/28GRwIEEU_mGAaYKwrNTQ3AxL0P7rLfWwW4TqvoLYhmQ2_8M9M9T0BN6WyAN3anIoxtGd6d8WbeHf4tpRyB1-ycG.jpg?quality=95&as=32x46,48x69,72x103,108x154,160x229,240x343,360x514,480x686,540x771,640x914,720x1029,1080x1543,1280x1829,1440x2057,1792x2560&from=bu&cs=1792x0",
+  "discussionNumber": 261,
+  "cast": "Деметриус Шипп мл., Кэт Грэм, Хилл Харпер, Энни Илонзе, Лорен Кохэн, Кит Робинсон, Джамал Вулард, Доминик Сантана, Кори Хардрикт"
+}
+[2025-10-12T14:31:04.558Z] Нормализованные данные: {
+  "Фильм": "All Eyez on Me/2pac: Легенда",
+  "Режиссер": "Бенни Бум",
+  "Жанр": "биография, музыка, драма",
+  "Страна": "США",
+  "Год": 2017,
+  "Оценка": "7.2",
+  "Номер обсуждения": 261,
+  "Дата": "20.10.2025",
+  "Постер URL": "https://sun9-81.userapi.com/s/v1/ig2/28GRwIEEU_mGAaYKwrNTQ3AxL0P7rLfWwW4TqvoLYhmQ2_8M9M9T0BN6WyAN3anIoxtGd6d8WbeHf4tpRyB1-ycG.jpg?quality=95&as=32x46,48x69,72x103,108x154,160x229,240x343,360x514,480x686,540x771,640x914,720x1029,1080x1543,1280x1829,1440x2057,1792x2560&from=bu&cs=1792x0",
+  "В главных ролях": "Деметриус Шипп мл., Кэт Грэм, Хилл Харпер, Энни Илонзе, Лорен Кохэн, Кит Робинсон, Джамал Вулард, Доминик Сантана, Кори Хардрикт",
+  "Участников": 6
+}
+[2025-10-12T14:31:04.558Z] Сохранение в Google Sheets...
+[2025-10-12T14:31:07.292Z] ✅ История успешно загружена в Google Sheets!
+[2025-10-12T14:31:07.293Z] Добавлена запись: All Eyez on Me/2pac: Легенда
+[2025-10-12T14:31:07.293Z] Сохранение в локальную историю...
+[2025-10-12T14:31:07.295Z] Синхронизация с GitHub...
+[2025-10-12T14:31:08.954Z] ✅ assets/data/films.json успешно обновлен на GitHub
+[2025-10-12T14:31:08.955Z] ✅ Данные успешно сохранены в Google Sheets и GitHub!
+[2025-10-12T14:31:35.532Z] ERROR in отправка элемента истории Suna no onna/Женщина в песках: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-12T14:31:56.812Z] ERROR in отправка элемента истории Suna no onna/Женщина в песках: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-12T14:35:38.042Z] ERROR in отправка элемента истории Suna no onna/Женщина в песках: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified
+[2025-10-12T14:43:58.354Z] ERROR in отправка элемента истории Suna no onna/Женщина в песках: ETELEGRAM: 400 Bad Request: wrong HTTP URL specified

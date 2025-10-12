@@ -29,5 +29,9 @@ module.exports = {
  * @example
  * 
  */
-  save: (subscriptions) => fileManager.save(FILE_KEYS.SUBSCRIPTIONS, [...subscriptions])
+  save: (subscriptions) => {
+    // Преобразуем Set в массив, гарантируя что все элементы - строки
+    const array = Array.from(subscriptions).map(id => id.toString());
+    return fileManager.save(FILE_KEYS.SUBSCRIPTIONS, array);
+  }
 };

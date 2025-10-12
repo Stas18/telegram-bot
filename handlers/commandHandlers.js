@@ -14,6 +14,7 @@ module.exports = {
    */
   init: (deps) => {
     Object.assign(this, deps);
+    this.vkService = deps.vkService;
   },
 
   /**
@@ -131,7 +132,7 @@ module.exports = {
     const subscriptions = this.subscriptionsManager.load();
     this.bot.sendMessage(
       msg.chat.id,
-      `📊 Всего подписчиков: ${subscriptions.size}`,
+      `📊 Всего подписчиков: ${subscriptions.size || 0}`,
       { parse_mode: "HTML" }
     );
   },

@@ -101,6 +101,89 @@ const filmsManager = {
     }
 
     return null;
+  },
+
+  /**
+   * Получает все фильмы отсортированные по номеру обсуждения (по возрастанию)
+   * 
+   * @returns {Array<Object>} Отсортированный массив фильмов
+   * @example
+   * const sortedFilms = filmsManager.getAllSorted();
+   */
+  getAllSorted: function () {
+    const films = this.load();
+    return films.sort((a, b) => (a.discussionNumber || 0) - (b.discussionNumber || 0));
+  },
+
+  /**
+   * Получает следующий доступный номер обсуждения
+   * 
+   * @returns {number} Следующий номер обсуждения
+   * @example
+   * const nextNumber = filmsManager.getNextDiscussionNumber();
+   */
+  getNextDiscussionNumber: function () {
+    const films = this.load();
+    if (films.length === 0) return 1;
+    
+    const maxNumber = Math.max(...films.map(film => parseInt(film.discussionNumber) || 0));
+    return maxNumber + 1;
+  },
+
+  /**
+   * Проверяет существует ли фильм с указанным номером обсуждения
+   * 
+   * @param {number|string} discussionNumber - Номер обсуждения для проверки
+   * @returns {boolean} true если фильм существует
+   * @example
+   * const exists = filmsManager.exists(5);
+   */
+  exists: function (discussionNumber) {
+    return this.getByDiscussionNumber(discussionNumber) !== null;
+  },
+
+  /**
+   * Удаляет фильм по номеру обсуждения
+   * 
+   * @param {number|string} discussionNumber - Номер обсуждения фильма для удаления
+   * @returns {boolean} true если фильм был удален
+   * @example
+   * const deleted = filmsManager.delete(3);
+   */
+  delete: function (discussionNumber) {
+    const films = this.load();
+    const index = films.findIndex(film => film.discussionNumber == discussionNumber);
+    
+    if (index !== -1) {
+      films.splice(index, 1);
+      this.save(films);
+      return true;
+    }
+    
+    return false;
+  },
+
+  /**
+   * Получает общее количество фильмов в истории
+   * 
+   * @returns {number} Количество фильмов
+   * @example
+   * const count = filmsManager.getCount();
+   */
+  getCount: function () {
+    const films = this.load();
+    return films.length;
+  },
+
+  /**
+   * Очищает всю историю фильмов
+   * 
+   * @returns {void}
+   * @example
+   * filmsManager.clearAll();
+   */
+  clearAll: function () {
+    this.save([]);
   }
 };
 

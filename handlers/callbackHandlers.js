@@ -86,12 +86,6 @@ module.exports = {
         return;
       }
 
-      // Подтверждаем получение callback
-      await this.bot.answerCallbackQuery(query.id, {
-        text: '...',
-        show_alert: false
-      });
-
       // Маршрутизация callback-запроса
       if (query.data.startsWith('admin_')) {
         await this.handleAdminCallbacks(query);

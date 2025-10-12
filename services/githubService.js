@@ -91,7 +91,7 @@ module.exports = {
   },
 
   /**
-   * Обновляет films.json на GitHub
+   * Обновляет films.json на GitHub - добавляет новые фильмы к существующим
    */
   updateFilmsOnGitHub: async function (filmsData) {
     if (!Array.isArray(filmsData)) {

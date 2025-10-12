@@ -4,6 +4,8 @@ module.exports = {
   init: function (deps) {
     Object.assign(this, deps);
     this.vkPostManager = vkPostManager;
+    this.vkService = deps.vkService;
+    this.githubService = deps.githubService;
   },
 
   /**
@@ -239,12 +241,12 @@ module.exports = {
         film: meeting.film,
         director: meeting.director,
         genre: meeting.genre,
+        country: meeting.country,
         year: meeting.year,
         poster: meeting.poster,
         discussionNumber: meeting.discussionNumber,
         date: meeting.date,
-        description: meeting.description,
-        country: meeting.country
+        description: meeting.description
       });
       this.votingManager.save(voting);
     }
@@ -371,8 +373,14 @@ module.exports = {
     });
 
     try {
-      // Сохраняем данные
-      await this.coreFunctions.saveToGitHubAndSheets(historyEntry);
+      // Загружаем существующие фильмы из истории
+      const existingFilms = this.filmsManager.load();
+
+      // Добавляем новую запись к существующим
+      const updatedFilms = [...existingFilms, historyEntry];
+
+      // Сохраняем обновленный список фильмов
+      await this.githubService.updateFilmsOnGitHub(updatedFilms);
 
       // ⚠️ Сбрасываем данные ТОЛЬКО после успешного сохранения
       this.votingManager.save({
@@ -563,7 +571,7 @@ module.exports = {
   },
 
   /**
- * Покажает меню оценок с текущей статистикой голосования
+ * Показывает меню оценок с текущей статистикой голосования
  * 
  * @param {number|string} chatId - ID чата
  * @param {number} messageId - ID сообщения для редактирования

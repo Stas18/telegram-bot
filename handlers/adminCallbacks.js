@@ -512,22 +512,36 @@ module.exports = {
             description: ''
           });
 
-          // Сохраняем на GitHub
-          try {
-            await this.githubService.updateNextMeetingOnGitHub(nextMeeting);
-            await this.bot.sendMessage(chatId,
-              '✅ Информация о следующем фильме сохранена локально и на GitHub!',
-              this.menuCreator.createMainMenu(true)
-            );
-          } catch (githubError) {
-            this.logger.error(githubError, 'Не удалось обновить следующую встречу на GitHub.');
-            await this.bot.sendMessage(chatId,
-              '✅ Информация сохранена локально, но произошла ошибка при синхронизации с GitHub: ' + githubError.message,
-              this.menuCreator.createMainMenu(true)
-            );
+          // ЛОГИКА: Сохраняем на GitHub с обработкой ошибок
+          let githubSuccess = false;
+          let githubError = null;
+
+          if (this.GITHUB_TOKEN && this.GITHUB_TOKEN !== 'undefined') {
+            try {
+              await this.githubService.updateNextMeetingOnGitHub(nextMeeting);
+              githubSuccess = true;
+            } catch (error) {
+              githubError = error;
+              this.logger.error(error, 'Синхронизация с GitHub');
+            }
           }
 
+          // Формируем ответное сообщение
+          let responseMessage = '✅ Информация о следующем фильме сохранена локально!';
+
+          if (githubSuccess) {
+            responseMessage += '\n✅ Данные синхронизированы с GitHub!';
+          } else {
+            if (!this.GITHUB_TOKEN || this.GITHUB_TOKEN === 'undefined') {
+              responseMessage += '\n⚠️ GitHub токен не настроен - синхронизация пропущена';
+            } else {
+              responseMessage += `\n⚠️ Ошибка синхронизации с GitHub: ${githubError.message}`;
+            }
+          }
+
+          await this.bot.sendMessage(chatId, responseMessage, this.menuCreator.createMainMenu(true));
           await this.coreFunctions.sendMeetingInfo(chatId);
+
         } else {
           await this.bot.sendMessage(chatId,
             `❌ Неверный формат. Ожидается 11 частей, получено ${parts.length}.\n\n` +

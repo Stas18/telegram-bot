@@ -235,5 +235,30 @@ module.exports = {
       this.logger.error(error, 'тестирование VK подключения');
       await this.bot.sendMessage(msg.chat.id, `❌ Ошибка: ${error.message}`);
     }
+  },
+
+  test_github: async (msg) => {
+    if (!this.ADMIN_IDS.includes(msg.from.id.toString())) return;
+
+    try {
+      await this.bot.sendMessage(msg.chat.id, "🔗 Проверка подключения к GitHub...");
+
+      const connectionTest = await this.githubService.testGitHubConnection();
+
+      if (connectionTest.success) {
+        await this.bot.sendMessage(
+          msg.chat.id,
+          `✅ GitHub подключение успешно!\n\n${connectionTest.message}`
+        );
+      } else {
+        await this.bot.sendMessage(
+          msg.chat.id,
+          `❌ Ошибка подключения к GitHub:\n${connectionTest.error}`
+        );
+      }
+    } catch (error) {
+      this.logger.error(error, 'тестирование GitHub подключения');
+      await this.bot.sendMessage(msg.chat.id, `❌ Ошибка: ${error.message}`);
+    }
   }
 };

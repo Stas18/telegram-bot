@@ -37,7 +37,6 @@ module.exports = {
         [{ text: '🔵 Группа ВКонтакте', url: 'https://vk.com/ulysses_club?from=groups' }],
         [{ text: '👨‍💻 Админ бота', url: 'https://t.me/GeekLS' }],
         [{ text: '🎬 Организатор киноклуба', url: 'https://vk.com/id8771550' }],
-        [{ text: '🎮 Интерактив-игра Odissea', callback_data: 'interactive_game' }],
         [{ text: '🔙 Главное меню', callback_data: 'main_menu' }]
       ]
     }

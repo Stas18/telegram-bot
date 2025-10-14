@@ -155,6 +155,7 @@ bot.onText(/\/restart/, (msg) => commandHandlers.restart(msg));
 bot.onText(/\/checkadmin/, (msg) => commandHandlers.checkadmin(msg));
 bot.onText(/\/test_sheets/, (msg) => commandHandlers.test_sheets(msg));
 bot.onText(/\/test_vk/, (msg) => commandHandlers.test_vk(msg));
+bot.onText(/\/test_github/, (msg) => commandHandlers.test_github(msg));
 
 /**
  * Обработчик обычных текстовых сообщений (не команд)

@@ -9,25 +9,29 @@ module.exports = {
   },
 
   /**
-   * Универсальный метод для обновления файлов на GitHub
+   * Универсальный метод для обновления файлов на GitHub с улучшенной обработкой ошибок
    */
   updateFileOnGitHub: async function (filePath, content, commitMessage) {
-    const MAX_RETRIES = 3;
-    const RETRY_DELAY = 2000;
+    const MAX_RETRIES = 2; // Уменьшено количество попыток
+    const RETRY_DELAY = 1000;
+
+    // Проверяем наличие токена
+    if (!this.GITHUB_TOKEN || this.GITHUB_TOKEN === "undefined") {
+      throw new Error("GitHub token не настроен. Проверьте переменную окружения GITHUB_TOKEN.");
+    }
 
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
       try {
-        if (!this.GITHUB_TOKEN || this.GITHUB_TOKEN === "undefined") {
-          throw new Error("GitHub token не настроен");
-        }
-
         // Получаем текущий SHA файла
         const sha = await this.getFileSha(filePath);
 
-        // Правильное кодирование контента
+        // Кодирование контента для JSON файлов
+        const contentString = typeof content === 'string' ? content : JSON.stringify(content, null, 2);
+        const encodedContent = Buffer.from(contentString).toString("base64");
+
         const postData = JSON.stringify({
           message: commitMessage,
-          content: Buffer.from(JSON.stringify(content, null, 2)).toString("base64"),
+          content: encodedContent,
           sha: sha || undefined,
         });
 
@@ -42,7 +46,6 @@ module.exports = {
             "Content-Length": Buffer.byteLength(postData),
           },
           timeout: 10000,
-          signal: AbortSignal.timeout(15000)
         };
 
         return await new Promise((resolve, reject) => {
@@ -56,7 +59,8 @@ module.exports = {
                 this.logger.log(`✅ ${filePath} успешно обновлен на GitHub`);
                 resolve(JSON.parse(data));
               } else {
-                reject(new Error(`GitHub API error: ${res.statusCode}: ${data}`));
+                const errorData = JSON.parse(data);
+                reject(new Error(`GitHub API error: ${res.statusCode} - ${errorData.message}`));
               }
             });
           });
@@ -78,16 +82,49 @@ module.exports = {
         this.logger.error(`Попытка ${attempt}/${MAX_RETRIES} не удалась: ${error.message}`);
 
         if (attempt === MAX_RETRIES) {
-          throw new Error(`Не удалось после ${MAX_RETRIES} попыток: ${error.message}`);
-        }
+          // Более информативное сообщение об ошибке
+          let errorMessage = `Не удалось обновить файл после ${MAX_RETRIES} попыток: ${error.message}`;
 
-        if (error.name === 'TimeoutError' || error.code === 'ECONNRESET') {
-          this.logger.error(`Таймаут или разрыв соединения при попытке ${attempt}`);
-          continue; // Продолжаем повторные попытки
+          if (error.message.includes('401')) {
+            errorMessage += '\nПроверьте правильность GitHub токена в переменной окружения GITHUB_TOKEN';
+          } else if (error.message.includes('404')) {
+            errorMessage += '\nФайл или репозиторий не найден. Проверьте путь и права доступа.';
+          } else if (error.message.includes('403')) {
+            errorMessage += '\nДоступ запрещен. Проверьте права токена GitHub.';
+          }
+
+          throw new Error(errorMessage);
         }
 
         await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * attempt));
       }
+    }
+  },
+
+  /**
+ * Проверяет подключение к GitHub API
+ */
+  testGitHubConnection: async function () {
+    try {
+      if (!this.GITHUB_TOKEN || this.GITHUB_TOKEN === "undefined") {
+        return {
+          success: false,
+          error: "GitHub token не настроен"
+        };
+      }
+
+      // Пробуем получить информацию о репозитории
+      const result = await this.getFileSha('assets/data/next-meeting.json');
+
+      return {
+        success: true,
+        message: "Подключение к GitHub успешно"
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error.message
+      };
     }
   },
 
@@ -107,30 +144,38 @@ module.exports = {
   },
 
   /**
-   * Обновляет next-meeting.json на GitHub
+   * Обновляет next-meeting.json на GitHub с улучшенной обработкой ошибок
    */
   updateNextMeetingOnGitHub: async function (nextMeetingData) {
-    // Нормализуем данные
+    // Нормализуем данные и устанавливаем значения по умолчанию
     const formattedData = {
-      date: nextMeetingData.date || '',
-      time: nextMeetingData.time || '',
-      place: nextMeetingData.place || '',
-      film: nextMeetingData.film || '',
-      director: nextMeetingData.director || '',
-      genre: nextMeetingData.genre || '',
-      country: nextMeetingData.country || '',
-      year: nextMeetingData.year || '',
-      poster: nextMeetingData.poster || '',
-      discussionNumber: nextMeetingData.discussionNumber || '',
-      cast: nextMeetingData.cast || '',
+      date: nextMeetingData.date || 'Дата встречи не указана',
+      time: nextMeetingData.time || 'Время не указано',
+      place: nextMeetingData.place || 'Онлайн (https://telemost.yandex.ru/)',
+      film: nextMeetingData.film || 'Фильм ещё не выбран',
+      director: nextMeetingData.director || 'Режиссёр не указан',
+      genre: nextMeetingData.genre || 'Жанр уточняется',
+      country: nextMeetingData.country || 'Страна производства не указана',
+      year: nextMeetingData.year || 'Год выхода неизвестен',
+      poster: nextMeetingData.poster || 'https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3bXk0dDYwamltMmg4aGNsZGo1NDkwN3FmdnI5a3RjaGZ1aG54bHl2MyZlcD12MV9naWZzX3JlbGF0ZWQmY3Q9Zw/YAlhwn67KT76E/giphy.gif',
+      discussionNumber: nextMeetingData.discussionNumber || 'Следующий номер после последнего в истории',
+      cast: nextMeetingData.cast || 'Актерский состав не указан',
       requirements: nextMeetingData.requirements || "Рекомендуем посмотреть фильм заранее"
     };
 
-    return await this.updateFileOnGitHub(
-      "assets/data/next-meeting.json",
-      formattedData,
-      "Bot: обновить информацию о следующей встрече"
-    );
+    try {
+      const result = await this.updateFileOnGitHub(
+        "assets/data/next-meeting.json",
+        formattedData,
+        `Bot: обновить информацию о следующей встрече - ${formattedData.film}`
+      );
+
+      this.logger.log(`✅ next-meeting.json успешно обновлен на GitHub: ${formattedData.film}`);
+      return result;
+    } catch (error) {
+      this.logger.error(`❌ Ошибка обновления next-meeting.json на GitHub: ${error.message}`);
+      throw error;
+    }
   },
 
   /**
